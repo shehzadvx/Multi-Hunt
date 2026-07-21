@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGNAL // BCA AI Induction Hunt</title>
+<style>
+  :root{
+    --bg: #0B0F14;
+    --panel: #10161D;
+    --panel-edge: #1C2530;
+    --amber: #FFB020;
+    --cyan: #2DD4CF;
+    --text: #E8EDF2;
+    --muted: #5B6B7A;
+    --danger: #FF5C5C;
+    --mono: 'Space Mono', 'Courier New', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; min-height:100vh;
+    background: radial-gradient(circle at 50% 0%, #121a22 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  @font-face{
+    font-family:'Space Mono';
+    src: local('Space Mono');
+  }
+  .scanlines{
+    position: fixed; inset:0; pointer-events:none; z-index:1;
+    background: repeating-linear-gradient(
+      to bottom, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px,
+      transparent 1px, transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+  .wrap{
+    position:relative; z-index:2;
+    max-width: 560px; margin: 0 auto;
+    min-height: 100vh;
+    padding: 28px 20px 60px;
+    display:flex; flex-direction:column;
+    gap: 18px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 3px; color: var(--muted);
+    text-transform: uppercase;
+  }
+  .brand .dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  h1{
+    font-family: var(--mono);
+    font-size: 26px; line-height:1.2; margin: 4px 0 0;
+    letter-spacing: 0.5px;
+  }
+  h1 span{ color: var(--amber); }
+
+  .sub{ color: var(--muted); font-size: 14px; line-height:1.5; }
+
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 14px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, transparent, var(--amber), var(--cyan), transparent);
+    opacity:.6;
+  }
+
+  .label{
+    font-family: var(--mono); font-size: 11px; letter-spacing:2px;
+    color: var(--muted); text-transform:uppercase; margin-bottom: 10px;
+  }
+
+  .team-grid{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;
+  }
+  .team-btn{
+    font-family: var(--mono); font-size: 18px; font-weight:700;
+    padding: 18px 0; border-radius: 10px;
+    border: 1px solid var(--panel-edge);
+    background: #0D1319; color: var(--text);
+    cursor:pointer; transition: all .15s ease;
+  }
+  .team-btn:hover{ border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+  .team-btn:active{ transform: translateY(0); }
+
+  select, input[type=text]{
+    width:100%; font-family: var(--mono); font-size:15px;
+    background:#0D1319; color:var(--text);
+    border:1px solid var(--panel-edge); border-radius:8px;
+    padding: 12px 14px; outline:none;
+  }
+  select:focus, input[type=text]:focus{ border-color: var(--cyan); }
+
+  .station-tag{
+    display:inline-block; font-family: var(--mono); font-size:11px;
+    letter-spacing:1.5px; color: var(--bg); background: var(--amber);
+    padding: 4px 10px; border-radius:20px; margin-bottom:14px;
+    text-transform:uppercase;
+  }
+
+  .riddle-text{
+    font-size: 17px; line-height:1.6; margin: 4px 0 18px;
+  }
+
+  button.submit{
+    width:100%; font-family:var(--mono); font-size:14px; letter-spacing:1px;
+    text-transform:uppercase; padding: 14px 0; border-radius:8px;
+    border:none; background: var(--cyan); color:#04211f; font-weight:700;
+    cursor:pointer; transition: all .15s ease;
+  }
+  button.submit:hover{ filter: brightness(1.1); }
+  button.submit:active{ transform: scale(0.98); }
+
+  .msg{ font-family: var(--mono); font-size: 13px; margin-top:12px; min-height:18px; }
+  .msg.err{ color: var(--danger); }
+  .msg.ok{ color: var(--cyan); }
+
+  .reveal{
+    text-align:center; padding: 10px 0;
+  }
+  .codeword{
+    font-family: var(--mono); font-size: 34px; font-weight:700;
+    color: var(--amber); letter-spacing: 3px; margin: 10px 0;
+    text-shadow: 0 0 20px rgba(255,176,32,0.35);
+  }
+  .next-line{
+    font-size:15px; color: var(--text); margin-top: 10px;
+  }
+  .next-line b{ color: var(--cyan); }
+
+  .final-card{
+    text-align:center; padding: 34px 22px;
+  }
+  .final-phrase{
+    font-family: var(--mono); font-size: 26px; font-weight:700;
+    color: var(--amber); line-height:1.5; letter-spacing:1px;
+    margin: 14px 0 6px;
+    animation: decode 1.1s ease;
+  }
+  @keyframes decode{
+    0%{ filter: blur(6px); opacity:0; letter-spacing: 10px; }
+    100%{ filter: blur(0); opacity:1; letter-spacing: 1px; }
+  }
+
+  .progress-row{ display:flex; gap:6px; margin-top: 8px; }
+  .progress-dot{
+    flex:1; height:5px; border-radius:3px; background: var(--panel-edge);
+  }
+  .progress-dot.done{ background: var(--cyan); }
+
+  .footer-link{
+    text-align:center; margin-top: 6px;
+  }
+  .footer-link a{
+    color: var(--muted); font-family: var(--mono); font-size:11px;
+    letter-spacing:1px; text-decoration:none; border-bottom: 1px dotted var(--muted);
+  }
+
+  .host-table{ width:100%; border-collapse: collapse; font-family: var(--mono); font-size:13px; }
+  .host-table th, .host-table td{
+    text-align:left; padding: 8px 6px; border-bottom:1px solid var(--panel-edge);
+  }
+  .host-table th{ color: var(--muted); font-weight:400; letter-spacing:1px; }
+  .pill{
+    display:inline-block; width:10px; height:10px; border-radius:50%;
+    background: var(--panel-edge); margin-right:3px;
+  }
+  .pill.on{ background: var(--cyan); }
+
+  .back-btn{
+    background:none; border:1px solid var(--panel-edge); color:var(--muted);
+    font-family: var(--mono); font-size:11px; letter-spacing:1px;
+    padding: 8px 14px; border-radius:20px; cursor:pointer; text-transform:uppercase;
+    width: fit-content;
+  }
+  .back-btn:hover{ color:var(--text); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+<div class="wrap" id="app">
+  <div class="brand"><span class="dot"></span> SIGNAL // BCA AI INDUCTION</div>
+  <h1>Decode the <span>signal</span>.</h1>
+  <div class="sub">Every station broadcasts something different to every team. Scan, solve, move.</div>
+  <div id="content"></div>
+  <div class="footer-link"><a href="#" id="hostLink">host view →</a></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+// ---------- FIREBASE ----------
+const firebaseConfig = {
+  apiKey: "AIzaSyD5Ok8WHtZ3SMaNatqPxxSknjsu1rJHlhs",
+  authDomain: "multi-hunt.firebaseapp.com",
+  databaseURL: "https://multi-hunt-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "multi-hunt",
+  storageBucket: "multi-hunt.firebasestorage.app",
+  messagingSenderId: "672009403836",
+  appId: "1:672009403836:web:d1a293877403ba5647ffb9"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ---------- DATA ----------
+const STATIONS = {
+  1: { name: "Faculty Desk", word: "WELCOME" },
+  2: { name: "Switchboard", word: "TO" },
+  3: { name: "Windows", word: "THE" },
+  4: { name: "Whiteboard", word: "BCA AI" },
+  5: { name: "Notice Board & Standee", word: "FAMILY" }
+};
+
+const SEQUENCE = {
+  A: [1,2,3,4,5],
+  B: [2,3,4,5,1],
+  C: [3,4,5,1,2],
+  D: [4,5,1,2,3]
+};
+
+const RIDDLES = {
+  1: {
+    A: { q: "A professor's note is pinned above the desk: \"Respect Unites Learners Everywhere.\" Take the first letter of every word. What 4-letter word do you get?", a: ["rule"] },
+    B: { q: "The desk has 3 drawers. Each drawer holds exactly double the pens of the one before it. The smallest drawer holds 4 pens. How many pens in total across all 3 drawers?", a: ["28"] },
+    C: { q: "The semester started on a Monday and attendance is taken every day except Sunday. By the 21st day of class, how many Sundays have already passed?", a: ["3","three"] },
+    D: { q: "5 faculty members are aged 30, 35, 40, 45, 50. One of them is older than the group's average age, but is neither the oldest nor the youngest. What is that age?", a: ["45"] }
+  },
+  2: {
+    A: { q: "A message arrives in binary: 01000011 01001111 01000100 01000101 — decode each byte to an ASCII letter. What word do you get?", a: ["code"] },
+    B: { q: "Classic puzzle: 3 switches sit outside a room, only one lights the bulb inside. You may flip switches any way you like, but may enter the room only once. Using bulb heat as a clue, what's the minimum number of switch-flips needed before you walk in, to be certain which switch is correct?", a: ["2","two"] },
+    C: { q: "The board counts in powers of two: 2, 4, 8, 16, __. What comes next?", a: ["32"] },
+    D: { q: "A spooky 5-letter word is hiding inside the word SWITCHBOARD. Find it.", a: ["witch"] }
+  },
+  3: {
+    A: { q: "Every window has 4 corners. This floor has 6 windows. If one spider builds exactly one web per corner, how many webs are there in total?", a: ["24"] },
+    B: { q: "Using only the letters W, I, N, D — unscramble them into a single word describing a strong gust of air.", a: ["wind"] },
+    C: { q: "A message looking out the window has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"] },
+    D: { q: "Sunlight takes 8 minutes to reach a window. If it left the sun at 12:00:00, what time does it arrive at the glass?", a: ["12:08","1208","12.08"] }
+  },
+  4: {
+    A: { q: "A sequence appears: 1, 1, 2, 3, 5, 8, __. What's the next number?", a: ["13"] },
+    B: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"] },
+    C: { q: "This board is wiped clean every 45 minutes during a 3-hour lecture block. Not counting the very start, how many times is it wiped?", a: ["4","four"] },
+    D: { q: "Marker colours available: RED, BLUE, BLACK, GREEN. The professor never uses RED. Today's diagram used exactly 2 colours, and neither was GREEN. Name the two colours used (any order).", a: ["blue black","black blue","blue, black","black, blue"] }
+  },
+  5: {
+    A: { q: "The notice board holds 5 pinned papers. Each day, 1 old paper is removed and 2 new ones are pinned. Starting from 5, how many papers are pinned after 3 days?", a: ["8"] },
+    B: { q: "The standee displays a greeting shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"] },
+    C: { q: "The standee is 6 feet tall and casts a 9-foot shadow. At that exact moment, the notice board casts a 3-foot shadow. Using the same ratio, how tall is the notice board?", a: ["2","two"] },
+    D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"] }
+  }
+};
+
+const TEAMS = ["A","B","C","D"];
+
+// ---------- STATE ----------
+const params = new URLSearchParams(window.location.search);
+let currentStation = params.get('station') ? parseInt(params.get('station')) : null;
+let currentTeam = null;
+
+const content = document.getElementById('content');
+const hostLink = document.getElementById('hostLink');
+hostLink.addEventListener('click', (e) => { e.preventDefault(); renderHost(); });
+
+function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+async function getProgress(team){
+  try{
+    const snap = await db.ref(`hunt/${team}`).get();
+    return snap.exists() ? snap.val() : {};
+  }catch(e){ console.error('storage read failed', e); return {}; }
+}
+async function saveProgress(team, progress){
+  try{
+    await db.ref(`hunt/${team}`).set(progress);
+  }catch(e){ console.error('storage save failed', e); }
+}
+
+// ---------- RENDER: station picker (fallback if no ?station= param) ----------
+function renderStationPicker(){
+  content.innerHTML = `
+    <div class="card">
+      <div class="label">Select Station</div>
+      <div class="sub" style="margin-bottom:12px;">This QR wasn't tagged with a station. Pick one to continue (host/testing only).</div>
+      <select id="stationSelect">
+        <option value="">— choose a station —</option>
+        ${Object.entries(STATIONS).map(([id,s]) => `<option value="${id}">${id}. ${s.name}</option>`).join('')}
+      </select>
+    </div>
+  `;
+  document.getElementById('stationSelect').addEventListener('change', (e) => {
+    currentStation = parseInt(e.target.value);
+    if(currentStation) renderTeamSelect();
+  });
+}
+
+// ---------- RENDER: team select ----------
+function renderTeamSelect(){
+  content.innerHTML = `
+    <div class="card">
+      <div class="station-tag">Station ${currentStation} · ${STATIONS[currentStation].name}</div>
+      <div class="label">Who's scanning?</div>
+      <div class="team-grid">
+        ${TEAMS.map(t => `<button class="team-btn" data-team="${t}">${t}</button>`).join('')}
+      </div>
+    </div>
+  `;
+  document.querySelectorAll('.team-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentTeam = btn.getAttribute('data-team');
+      renderRiddle();
+    });
+  });
+}
+
+// ---------- RENDER: riddle / already solved / final ----------
+async function renderRiddle(){
+  content.innerHTML = `<div class="card"><div class="label">Loading signal…</div></div>`;
+  const progress = await getProgress(currentTeam);
+
+  if(progress[currentStation]){
+    renderAlreadySolved(progress);
+    return;
+  }
+
+  const riddle = RIDDLES[currentStation][currentTeam];
+  const doneCount = Object.keys(progress).length;
+
+  content.innerHTML = `
+    <div class="card">
+      <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
+      <div class="progress-row">
+        ${[1,2,3,4,5].map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
+      </div>
+      <div class="riddle-text" style="margin-top:16px;">${riddle.q}</div>
+      <input type="text" id="answerInput" placeholder="Type your answer…" autocomplete="off" />
+      <div style="height:12px;"></div>
+      <button class="submit" id="submitBtn">Transmit Answer</button>
+      <div class="msg" id="msgBox"></div>
+    </div>
+  `;
+
+  const submit = async () => {
+    const val = normalize(document.getElementById('answerInput').value);
+    const msgBox = document.getElementById('msgBox');
+    if(!val){ return; }
+    const accepted = riddle.a.map(normalize);
+    if(accepted.includes(val)){
+      progress[currentStation] = STATIONS[currentStation].word;
+      await saveProgress(currentTeam, progress);
+      renderAlreadySolved(progress, true);
+    } else {
+      msgBox.textContent = "✕ Not quite. Signal rejected — try again.";
+      msgBox.className = "msg err";
+    }
+  };
+  document.getElementById('submitBtn').addEventListener('click', submit);
+  document.getElementById('answerInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') submit(); });
+}
+
+function renderAlreadySolved(progress, justSolved){
+  const doneCount = Object.keys(progress).length;
+  const allDone = doneCount === 5;
+
+  if(allDone){
+    renderFinal(progress);
+    return;
+  }
+
+  const seq = SEQUENCE[currentTeam];
+  const idx = seq.indexOf(currentStation);
+  const nextStationId = seq[idx+1];
+  const nextName = STATIONS[nextStationId].name;
+
+  content.innerHTML = `
+    <div class="card reveal">
+      <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
+      <div class="label" style="margin-top:10px;">${justSolved ? 'Signal decoded' : 'Already decoded'}</div>
+      <div class="codeword">${STATIONS[currentStation].word}</div>
+      <div class="progress-row">
+        ${[1,2,3,4,5].map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
+      </div>
+      <div class="next-line">Next stop: <b>${nextName}</b></div>
+    </div>
+  `;
+}
+
+function renderFinal(progress){
+  const phrase = [1,2,3,4,5].map(i => STATIONS[i].word).join(' ');
+  content.innerHTML = `
+    <div class="card final-card">
+      <div class="label">All 5 signals decoded</div>
+      <div class="final-phrase">"${phrase}"</div>
+      <div class="sub">Go show this screen to your host to lock in your finish time.</div>
+    </div>
+  `;
+}
+
+// ---------- HOST VIEW ----------
+async function renderHost(){
+  content.innerHTML = `<div class="card"><div class="label">Loading dashboard…</div></div>`;
+  const all = {};
+  for(const t of TEAMS){ all[t] = await getProgress(t); }
+
+  content.innerHTML = `
+    <div class="card">
+      <div class="label">Host Dashboard</div>
+      <table class="host-table">
+        <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th></tr>
+        ${TEAMS.map(t => {
+          const p = all[t];
+          const doneCount = Object.keys(p).length;
+          return `<tr>
+            <td><b>${t}</b></td>
+            ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
+            <td>${doneCount}/5</td>
+          </tr>`;
+        }).join('')}
+      </table>
+    </div>
+    <button class="back-btn" id="backBtn">← back</button>
+  `;
+  document.getElementById('backBtn').addEventListener('click', boot);
+}
+
+// ---------- BOOT ----------
+function boot(){
+  currentTeam = null;
+  if(currentStation && STATIONS[currentStation]){
+    renderTeamSelect();
+  } else {
+    renderStationPicker();
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
