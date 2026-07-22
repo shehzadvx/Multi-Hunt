@@ -439,6 +439,7 @@ function renderAlreadySolved(progress, justSolved){
       <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
       <div class="label" style="margin-top:10px;">${justSolved ? 'Signal decoded' : 'Already decoded'}</div>
       <div class="codeword">${STATIONS[currentStation].word}</div>
+      <div class="sub" style="margin-top:8px; color: var(--amber);">📝 Remember this letter: <b>${STATIONS[currentStation].word[0]}</b> — you'll need it at the end.</div>
       <div class="progress-row">
         ${[1,2,3,4,5].map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
       </div>
