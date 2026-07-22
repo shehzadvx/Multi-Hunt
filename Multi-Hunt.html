@@ -332,6 +332,12 @@ function renderStationPicker(){
 }
 
 // ---------- RENDER: team select ----------
+let DEVICE_ID = localStorage.getItem('signalDeviceId');
+if(!DEVICE_ID){
+  DEVICE_ID = 'dev-' + Math.random().toString(36).slice(2, 10);
+  localStorage.setItem('signalDeviceId', DEVICE_ID);
+}
+
 function renderTeamSelect(){
   content.innerHTML = `
     <div class="card">
@@ -343,8 +349,18 @@ function renderTeamSelect(){
     </div>
   `;
   document.querySelectorAll('.team-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentTeam = btn.getAttribute('data-team');
+    btn.addEventListener('click', async () => {
+      const t = btn.getAttribute('data-team');
+      try{
+        const claimSnap = await db.ref(`hunt/${t}/claimedBy`).get();
+        if(claimSnap.exists() && claimSnap.val() !== DEVICE_ID){
+          const proceed = confirm(`Team ${t} is already being used on another phone. Only proceed if that's a mistake and this really is Team ${t}'s device.`);
+          if(!proceed) return;
+        } else if(!claimSnap.exists()){
+          await db.ref(`hunt/${t}/claimedBy`).set(DEVICE_ID);
+        }
+      }catch(e){ console.error('claim check failed', e); }
+      currentTeam = t;
       renderRiddle();
     });
   });
