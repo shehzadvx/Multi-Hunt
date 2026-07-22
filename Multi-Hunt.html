@@ -191,6 +191,26 @@
     width: fit-content;
   }
   .back-btn:hover{ color:var(--text); border-color: var(--cyan); }
+
+  .lock-box{ margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--panel-edge); }
+  .lock-title{
+    font-family: var(--mono); font-size:12px; letter-spacing:2px;
+    color: var(--muted); text-transform:uppercase; margin-bottom: 10px;
+  }
+  .lock-row{ display:flex; gap:8px; }
+  .lock-row input{ flex:1; text-align:center; letter-spacing:2px; text-transform:uppercase; }
+  .lock-row button{
+    font-family:var(--mono); font-size:13px; letter-spacing:1px; text-transform:uppercase;
+    padding: 0 18px; border-radius:8px; border:none;
+    background: var(--amber); color:#241800; font-weight:700; cursor:pointer;
+  }
+  .lock-row button:hover{ filter: brightness(1.1); }
+  .lb-title{
+    font-family: var(--mono); font-size:20px; color: var(--cyan);
+    letter-spacing:1px; margin: 4px 0 14px; text-align:center;
+  }
+  .lb-rank{ font-family: var(--mono); font-weight:700; }
+  .lb-rank.gold{ color: var(--amber); }
 </style>
 </head>
 <body>
@@ -237,33 +257,33 @@ const SEQUENCE = {
 
 const RIDDLES = {
   1: {
-    A: { q: "A professor's note is pinned above the desk: \"Respect Unites Learners Everywhere.\" Take the first letter of every word. What 4-letter word do you get?", a: ["rule"] },
+    A: { q: "I have keys but no locks, space but no rooms, you can enter but can't go inside. What am I?", a: ["keyboard"] },
     B: { q: "The desk has 3 drawers. Each drawer holds exactly double the pens of the one before it. The smallest drawer holds 4 pens. How many pens in total across all 3 drawers?", a: ["28"] },
-    C: { q: "The semester started on a Monday and attendance is taken every day except Sunday. By the 21st day of class, how many Sundays have already passed?", a: ["3","three"] },
+    C: { q: "Attendance is taken every day except Sunday. Class started on a Monday. By the 21st day of class (not calendar day), how many Sundays have passed in between?", a: ["3","three"] },
     D: { q: "5 faculty members are aged 30, 35, 40, 45, 50. One of them is older than the group's average age, but is neither the oldest nor the youngest. What is that age?", a: ["45"] }
   },
   2: {
-    A: { q: "A message arrives in binary: 01000011 01001111 01000100 01000101 — decode each byte to an ASCII letter. What word do you get?", a: ["code"] },
-    B: { q: "Classic puzzle: 3 switches sit outside a room, only one lights the bulb inside. You may flip switches any way you like, but may enter the room only once. Using bulb heat as a clue, what's the minimum number of switch-flips needed before you walk in, to be certain which switch is correct?", a: ["2","two"] },
-    C: { q: "The board counts in powers of two: 2, 4, 8, 16, __. What comes next?", a: ["32"] },
-    D: { q: "A spooky 5-letter word is hiding inside the word SWITCHBOARD. Find it.", a: ["witch"] }
+    A: { q: "The more you take, the more you leave behind. What am I?", a: ["footsteps"] },
+    B: { q: "A switchboard has 6 switches. Half of them are OFF. Then 2 more get switched OFF. How many are ON now?", a: ["1","one"] },
+    C: { q: "I run but never walk, have a mouth but never talk, have a bed but never sleep. What am I?", a: ["river"] },
+    D: { q: "A 5-letter spooky word is hiding inside the word SWITCHBOARD, letters in order, no rearranging. Find it.", a: ["witch"] }
   },
   3: {
-    A: { q: "Every window has 4 corners. This floor has 6 windows. If one spider builds exactly one web per corner, how many webs are there in total?", a: ["24"] },
+    A: { q: "Picture a room with 6 windows, each with 4 corners. A spider builds a web on every corner except it skips every 3rd corner it reaches. How many webs get built in total?", a: ["16"] },
     B: { q: "Using only the letters W, I, N, D — unscramble them into a single word describing a strong gust of air.", a: ["wind"] },
-    C: { q: "A message looking out the window has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"] },
-    D: { q: "Sunlight takes 8 minutes to reach a window. If it left the sun at 12:00:00, what time does it arrive at the glass?", a: ["12:08","1208","12.08"] }
+    C: { q: "I let you see out, but at night, I show you yourself instead. What am I?", a: ["window"] },
+    D: { q: "A window is left open at an angle exactly halfway between fully shut (0°) and fully open (90°). What is that angle, in degrees?", a: ["45"] }
   },
   4: {
     A: { q: "A sequence appears: 1, 1, 2, 3, 5, 8, __. What's the next number?", a: ["13"] },
-    B: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"] },
+    B: { q: "I'm written on, wiped off, and I never keep a secret. What am I?", a: ["whiteboard"] },
     C: { q: "This board is wiped clean every 45 minutes during a 3-hour lecture block. Not counting the very start, how many times is it wiped?", a: ["4","four"] },
-    D: { q: "Marker colours available: RED, BLUE, BLACK, GREEN. The professor never uses RED. Today's diagram used exactly 2 colours, and neither was GREEN. Name the two colours used (any order).", a: ["blue black","black blue","blue, black","black, blue"] }
+    D: { q: "I have a cap but no head, I run dry but I'm never thirsty. What am I?", a: ["marker"] }
   },
   5: {
     A: { q: "The notice board holds 5 pinned papers. Each day, 1 old paper is removed and 2 new ones are pinned. Starting from 5, how many papers are pinned after 3 days?", a: ["8"] },
-    B: { q: "The standee displays a greeting shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"] },
-    C: { q: "The standee is 6 feet tall and casts a 9-foot shadow. At that exact moment, the notice board casts a 3-foot shadow. Using the same ratio, how tall is the notice board?", a: ["2","two"] },
+    B: { q: "I stand tall, greet every guest, but I'm not alive. What am I?", a: ["standee"] },
+    C: { q: "I'm pinned up, read once, and forgotten fast. What am I?", a: ["notice"] },
     D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"] }
   }
 };
@@ -340,6 +360,13 @@ async function renderRiddle(){
     return;
   }
 
+  const seq = SEQUENCE[currentTeam];
+  const nextStation = seq.find(s => !progress[s]);
+  if(currentStation !== nextStation){
+    renderWrongStation(nextStation);
+    return;
+  }
+
   const riddle = RIDDLES[currentStation][currentTeam];
   const doneCount = Object.keys(progress).length;
 
@@ -364,6 +391,10 @@ async function renderRiddle(){
     const accepted = riddle.a.map(normalize);
     if(accepted.includes(val)){
       progress[currentStation] = STATIONS[currentStation].word;
+      const doneCount = [1,2,3,4,5].filter(i => progress[i]).length;
+      if(doneCount === 5 && !progress.finishTime){
+        progress.finishTime = Date.now();
+      }
       await saveProgress(currentTeam, progress);
       renderAlreadySolved(progress, true);
     } else {
@@ -375,8 +406,22 @@ async function renderRiddle(){
   document.getElementById('answerInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') submit(); });
 }
 
+function renderWrongStation(nextStation){
+  const nextName = STATIONS[nextStation].name;
+  content.innerHTML = `
+    <div class="card reveal">
+      <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
+      <div class="label" style="margin-top:10px; color: var(--danger);">Out of order</div>
+      <div class="sub" style="margin:10px 0 4px;">This isn't your next stop. No skipping signals — head to your actual next station first.</div>
+      <div class="next-line">Go to: <b>Station ${nextStation} · ${nextName}</b></div>
+      <button class="back-btn" id="backToTeamBtn" style="margin:18px auto 0;">← wrong team?</button>
+    </div>
+  `;
+  document.getElementById('backToTeamBtn').addEventListener('click', renderTeamSelect);
+}
+
 function renderAlreadySolved(progress, justSolved){
-  const doneCount = Object.keys(progress).length;
+  const doneCount = [1,2,3,4,5].filter(i => progress[i]).length;
   const allDone = doneCount === 5;
 
   if(allDone){
@@ -402,6 +447,8 @@ function renderAlreadySolved(progress, justSolved){
   `;
 }
 
+const FINAL_PASSWORD = "WTTBF";
+
 function renderFinal(progress){
   const phrase = [1,2,3,4,5].map(i => STATIONS[i].word).join(' ');
   content.innerHTML = `
@@ -409,7 +456,59 @@ function renderFinal(progress){
       <div class="label">All 5 signals decoded</div>
       <div class="final-phrase">"${phrase}"</div>
       <div class="sub">Go show this screen to your host to lock in your finish time.</div>
+
+      <div class="lock-box">
+        <div class="lock-title">🔒 Final Transmission — Locked</div>
+        <div class="sub" style="margin-bottom:10px;">Every station left behind a single letter. Line them up in order to unlock what's next.</div>
+        <div class="lock-row">
+          <input type="text" id="lockInput" placeholder="ENTER CODE" autocomplete="off" />
+          <button id="lockBtn">Unlock</button>
+        </div>
+        <div class="msg" id="lockMsg"></div>
+      </div>
+      <div id="lockedReveal"></div>
     </div>
+  `;
+
+  const tryUnlock = async () => {
+    const val = document.getElementById('lockInput').value.trim().toUpperCase();
+    const lockMsg = document.getElementById('lockMsg');
+    if(val === FINAL_PASSWORD){
+      lockMsg.textContent = "";
+      document.querySelector('.lock-box').style.display = 'none';
+      await renderLeaderboard();
+    } else {
+      lockMsg.textContent = "✕ Incorrect code.";
+      lockMsg.className = "msg err";
+    }
+  };
+  document.getElementById('lockBtn').addEventListener('click', tryUnlock);
+  document.getElementById('lockInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') tryUnlock(); });
+}
+
+async function renderLeaderboard(){
+  const target = document.getElementById('lockedReveal');
+  target.innerHTML = `<div class="sub">Decrypting…</div>`;
+
+  const all = {};
+  for(const t of TEAMS){ all[t] = await getProgress(t); }
+
+  const ranked = TEAMS
+    .filter(t => [1,2,3,4,5].every(i => all[t][i]) && all[t].finishTime)
+    .sort((a,b) => all[a].finishTime - all[b].finishTime);
+
+  target.innerHTML = `
+    <div class="lb-title">🏆 Wall of Fame</div>
+    <table class="host-table" style="text-align:center;">
+      <tr><th>Rank</th><th>Team</th><th>Finished</th></tr>
+      ${ranked.map((t,idx) => `
+        <tr>
+          <td class="lb-rank ${idx===0 ? 'gold':''}">${idx+1}</td>
+          <td><b>${t}</b></td>
+          <td>${new Date(all[t].finishTime).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</td>
+        </tr>`).join('')}
+    </table>
+    <div class="sub" style="margin-top:16px;">Welcome to the family. 🎉 Head to the seniors' table to claim your spot.</div>
   `;
 }
 
@@ -426,7 +525,7 @@ async function renderHost(){
         <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th></tr>
         ${TEAMS.map(t => {
           const p = all[t];
-          const doneCount = Object.keys(p).length;
+          const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
           return `<tr>
             <td><b>${t}</b></td>
             ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
