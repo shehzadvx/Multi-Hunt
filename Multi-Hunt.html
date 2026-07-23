@@ -258,7 +258,7 @@ const STATIONS = {
 const SEQUENCE = {
   A: [1,2,3,4,5,6,7,8,9,10],
   B: [4,5,6,7,8,9,10,1,2,3],
-  C: [7,8,9,10,1,2,3,4,5,6],
+  C: [6,7,8,9,10,1,2,3,4,5],
   D: [9,10,1,2,3,4,5,6,7,8]
 };
 
@@ -484,19 +484,19 @@ function renderAlreadySolved(progress, justSolved){
   `;
 }
 
-const FINAL_PASSWORD = "SIGNAL10";
-
 function renderFinal(progress){
-  const phrase = ALL_STATIONS.map(i => STATIONS[i].word).join(' ');
+  const words = ALL_STATIONS.map(i => STATIONS[i].word);
+  const phrase = words.join(' ');
+  const derivedCode = words.map(w => w[0]).join('').toUpperCase();
+
   content.innerHTML = `
     <div class="card final-card">
-      <div class="label">All 5 signals decoded</div>
+      <div class="label">All 10 signals decoded</div>
       <div class="final-phrase">"${phrase}"</div>
-      <div class="sub">Go show this screen to your host to lock in your finish time.</div>
 
       <div class="lock-box">
         <div class="lock-title">🔒 Final Transmission — Locked</div>
-        <div class="sub" style="margin-bottom:10px;">Every station left behind a single letter. Line them up in order to unlock what's next.</div>
+        <div class="sub" style="margin-bottom:10px;">Take the first letter of each word above, in order. Enter that as your decryption key.</div>
         <div class="lock-row">
           <input type="text" id="lockInput" placeholder="ENTER CODE" autocomplete="off" />
           <button id="lockBtn">Unlock</button>
@@ -510,12 +510,12 @@ function renderFinal(progress){
   const tryUnlock = async () => {
     const val = document.getElementById('lockInput').value.trim().toUpperCase();
     const lockMsg = document.getElementById('lockMsg');
-    if(val === FINAL_PASSWORD){
+    if(val === derivedCode){
       lockMsg.textContent = "";
       document.querySelector('.lock-box').style.display = 'none';
       await renderLeaderboard();
     } else {
-      lockMsg.textContent = "✕ Incorrect code.";
+      lockMsg.textContent = "✕ Incorrect code. Check the order.";
       lockMsg.className = "msg err";
     }
   };
@@ -550,7 +550,14 @@ async function renderLeaderboard(){
 }
 
 // ---------- HOST VIEW ----------
+const HOST_PASSCODE = "aiadmin26";
+
 async function renderHost(){
+  const entered = prompt("Host passcode:");
+  if(entered !== HOST_PASSCODE){
+    alert("Incorrect passcode.");
+    return;
+  }
   content.innerHTML = `<div class="card"><div class="label">Loading dashboard…</div></div>`;
   const all = {};
   for(const t of TEAMS){ all[t] = await getProgress(t); }
