@@ -240,88 +240,51 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ---------- DATA ----------
-const ALL_STATIONS = [1,2,3,4,5,6,7,8,9,10];
-
 const STATIONS = {
-  1: { name: "Chairs", word: "WELCOME" },
-  2: { name: "Benches", word: "TO" },
+  1: { name: "Faculty Desk", word: "WELCOME" },
+  2: { name: "Switchboard", word: "TO" },
   3: { name: "Windows", word: "THE" },
-  4: { name: "Blackboard", word: "BCA" },
-  5: { name: "Switchboard", word: "AI" },
-  6: { name: "Standee", word: "FAMILY" },
-  7: { name: "Noticeboard", word: "ENJOY" },
-  8: { name: "Pillar", word: "THE" },
-  9: { name: "Flower Pot", word: "JOURNEY" },
-  10: { name: "Corridor Table", word: "AHEAD" }
+  4: { name: "Whiteboard", word: "BCA AI" },
+  5: { name: "Notice Board & Standee", word: "FAMILY" }
 };
 
 const SEQUENCE = {
-  A: [1,2,3,4,5,6,7,8,9,10],
-  B: [4,5,6,7,8,9,10,1,2,3],
-  C: [6,7,8,9,10,1,2,3,4,5],
-  D: [9,10,1,2,3,4,5,6,7,8]
+  A: [1,2,3,4,5],
+  B: [2,3,4,5,1],
+  C: [3,4,5,1,2],
+  D: [4,5,1,2,3]
 };
 
 const RIDDLES = {
   1: {
-    A: { q: "I have four legs but cannot walk, a back but no spine. What am I?", a: ["chair"] },
-    B: { q: "This room is arranged for an event: 5 rows, 6 chairs per row. How many chairs in total?", a: ["30"] },
-    C: { q: "Unscramble these letters into a piece of furniture: A T S E", a: ["seat"] },
-    D: { q: "What do you pull out before you sit down, and push in before you leave?", a: ["chair"] }
+    A: { q: "I have keys but no locks, space but no rooms, you can enter but can't go inside. What am I?", a: ["keyboard"] },
+    B: { q: "Double me and add 10, you get 50. What number am I?", a: ["20"] },
+    C: { q: "Attendance is taken every day except Sunday. Class started on a Monday. By the 21st day of class (not calendar day), how many Sundays have passed in between?", a: ["3","three"] },
+    D: { q: "Rearrange the letters of 'ELEVEN PLUS TWO' to form another sum. It should equal the same number.", a: ["twelve plus one"] }
   },
   2: {
-    A: { q: "I seat many but belong to no one, I'm shared but never owned. What am I?", a: ["bench"] },
-    B: { q: "A bench seats 3 students comfortably. If 15 students need seating, how many benches are needed?", a: ["5","five"] },
-    C: { q: "Unscramble these letters into a piece of furniture: H B N C E", a: ["bench"] },
-    D: { q: "I'm a long seat, sometimes with a back, found in parks, corridors, and even courtrooms. What am I?", a: ["bench"] }
+    A: { q: "The more you take, the more you leave behind. What am I?", a: ["footsteps"] },
+    B: { q: "A switchboard has 6 switches. Half of them are OFF. Then 2 more get switched OFF. How many are ON now?", a: ["1","one"] },
+    C: { q: "I'm an odd number. Take away one letter and I become even. What number am I?", a: ["seven"] },
+    D: { q: "A 5-letter spooky word is hiding inside the word SWITCHBOARD, letters in order, no rearranging. Find it.", a: ["witch"] }
   },
   3: {
-    A: { q: "This floor has exactly 4 windows, each with 4 corners. How many corners in total?", a: ["16"] },
-    B: { q: "Unscramble these letters into a weather word: D N I W", a: ["wind"] },
-    C: { q: "A word has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"] },
-    D: { q: "I have panes but feel no pain, I let light in but I'm not the sun. What am I?", a: ["window"] }
+    A: { q: "Three windows are open, two are closed. If you close one open window and open one closed window, how many windows are open now?", a: ["3","three"] },
+    B: { q: "I'm always coming but never arrive. What am I?", a: ["wind"] },
+    C: { q: "What comes once in a minute, twice in a moment, but never in a thousand years?", a: ["letter m","m","the letter m"] },
+    D: { q: "A window is left open at an angle exactly halfway between fully shut (0°) and fully open (90°). What is that angle, in degrees?", a: ["45"] }
   },
   4: {
     A: { q: "A sequence appears: 1, 1, 2, 3, 5, 8, __. What's the next number?", a: ["13"] },
-    B: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"] },
-    C: { q: "I'm written on, wiped off, and never keep a secret. What am I?", a: ["blackboard","board"] },
-    D: { q: "Marker colours available: RED, BLUE, BLACK, GREEN. Today's diagram used exactly 2 colours, and neither was RED or GREEN. Name the two colours used (any order).", a: ["blue black","black blue","blue, black","black, blue"] }
+    B: { q: "I'm written on, wiped off, and I never keep a secret. What am I?", a: ["whiteboard"] },
+    C: { q: "A whiteboard is wiped every 45 minutes during a 3-hour lecture, but the lecturer arrives 15 minutes late. How many wipes happen?", a: ["3","three"] },
+    D: { q: "Forward I'm heavy, backward I'm not. What am I?", a: ["ton"] }
   },
   5: {
-    A: { q: "The more you take, the more you leave behind. What am I?", a: ["footsteps"] },
-    B: { q: "Classic puzzle: 3 switches sit outside a room, only one lights the bulb inside. You may flip switches any way you like, but may enter the room only once. Using bulb heat as a clue, what's the minimum number of switch-flips needed before you walk in, to be certain which switch is correct?", a: ["2","two"] },
-    C: { q: "The board counts in powers of two: 2, 4, 8, 16, __. What comes next?", a: ["32"] },
-    D: { q: "A spooky 5-letter word is hiding inside the word SWITCHBOARD. Find it.", a: ["witch"] }
-  },
-  6: {
-    A: { q: "I stand tall, welcome guests, but I'm not alive. What am I?", a: ["standee"] },
-    B: { q: "A standee is 6 feet tall and casts a 9-foot shadow. At that exact moment, a nearby pole casts a 3-foot shadow. Using the same ratio, how tall is the pole?", a: ["2","two"] },
-    C: { q: "A greeting has been shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"] },
-    D: { q: "Unscramble these letters into what stands here to welcome guests: T S E D N A E", a: ["standee"] }
-  },
-  7: {
-    A: { q: "I'm pinned up, read once, and forgotten fast. What am I?", a: ["notice"] },
-    B: { q: "The board holds 5 pinned papers. Each day, 1 old paper is removed and 2 new ones are pinned. Starting from 5, how many papers are pinned after 3 days?", a: ["8"] },
-    C: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"] },
-    D: { q: "I'm full of names but I'm not a person. What am I?", a: ["list"] }
-  },
-  8: {
-    A: { q: "There are exactly 4 pillars on this floor. If each pillar has 4 sides, how many sides in total?", a: ["16"] },
-    B: { q: "I stand straight, never bend, and hold up what's above me. What am I?", a: ["pillar"] },
-    C: { q: "Unscramble these letters into what supports the roof: R A L L I P", a: ["pillar"] },
-    D: { q: "I come in fours on this floor, stand in a row, and never move. What single object am I?", a: ["pillar"] }
-  },
-  9: {
-    A: { q: "I hold soil and roots but I'm not the ground. What am I?", a: ["pot","flowerpot"] },
-    B: { q: "There are 3 flower pots on this floor. Each pot holds 2 plants. How many plants in total?", a: ["6","six"] },
-    C: { q: "Unscramble these letters into what holds a plant: T P O", a: ["pot"] },
-    D: { q: "I'm placed near entrances to bring colour and life, but I can't move to follow the sun. What am I?", a: ["plant","pot"] }
-  },
-  10: {
-    A: { q: "I have a flat top and legs, but I never walk anywhere. What am I?", a: ["table"] },
-    B: { q: "Unscramble these letters into a piece of furniture: L E B T A", a: ["table"] },
-    C: { q: "A table has 4 legs. If there's exactly 1 table in this corridor, how many table-legs are on the floor right now?", a: ["4","four"] },
-    D: { q: "Add a chair next to me and you've set up a spot to sit and talk. What piece of furniture am I?", a: ["table"] }
+    A: { q: "Start at 5. Lose 1, gain 2, lose 1, gain 2. Where do you end up?", a: ["7","seven"] },
+    B: { q: "I stand tall, greet every guest, but I'm not alive. What am I?", a: ["standee"] },
+    C: { q: "What can travel around the world while staying in a corner?", a: ["stamp"] },
+    D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"] }
   }
 };
 
@@ -369,6 +332,12 @@ function renderStationPicker(){
 }
 
 // ---------- RENDER: team select ----------
+let DEVICE_ID = localStorage.getItem('signalDeviceId');
+if(!DEVICE_ID){
+  DEVICE_ID = 'dev-' + Math.random().toString(36).slice(2, 10);
+  localStorage.setItem('signalDeviceId', DEVICE_ID);
+}
+
 function renderTeamSelect(){
   content.innerHTML = `
     <div class="card">
@@ -380,8 +349,18 @@ function renderTeamSelect(){
     </div>
   `;
   document.querySelectorAll('.team-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentTeam = btn.getAttribute('data-team');
+    btn.addEventListener('click', async () => {
+      const t = btn.getAttribute('data-team');
+      try{
+        const claimSnap = await db.ref(`hunt/${t}/claimedBy`).get();
+        if(claimSnap.exists() && claimSnap.val() !== DEVICE_ID){
+          const proceed = confirm(`Team ${t} is already being used on another phone. Only proceed if that's a mistake and this really is Team ${t}'s device.`);
+          if(!proceed) return;
+        } else if(!claimSnap.exists()){
+          await db.ref(`hunt/${t}/claimedBy`).set(DEVICE_ID);
+        }
+      }catch(e){ console.error('claim check failed', e); }
+      currentTeam = t;
       renderRiddle();
     });
   });
@@ -411,7 +390,7 @@ async function renderRiddle(){
     <div class="card">
       <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
       <div class="progress-row">
-        ${ALL_STATIONS.map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
+        ${[1,2,3,4,5].map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
       </div>
       <div class="riddle-text" style="margin-top:16px;">${riddle.q}</div>
       <input type="text" id="answerInput" placeholder="Type your answer…" autocomplete="off" />
@@ -428,8 +407,8 @@ async function renderRiddle(){
     const accepted = riddle.a.map(normalize);
     if(accepted.includes(val)){
       progress[currentStation] = STATIONS[currentStation].word;
-      const doneCount = ALL_STATIONS.filter(i => progress[i]).length;
-      if(doneCount === ALL_STATIONS.length && !progress.finishTime){
+      const doneCount = [1,2,3,4,5].filter(i => progress[i]).length;
+      if(doneCount === 5 && !progress.finishTime){
         progress.finishTime = Date.now();
       }
       await saveProgress(currentTeam, progress);
@@ -458,8 +437,8 @@ function renderWrongStation(nextStation){
 }
 
 function renderAlreadySolved(progress, justSolved){
-  const doneCount = ALL_STATIONS.filter(i => progress[i]).length;
-  const allDone = doneCount === ALL_STATIONS.length;
+  const doneCount = [1,2,3,4,5].filter(i => progress[i]).length;
+  const allDone = doneCount === 5;
 
   if(allDone){
     renderFinal(progress);
@@ -476,27 +455,28 @@ function renderAlreadySolved(progress, justSolved){
       <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
       <div class="label" style="margin-top:10px;">${justSolved ? 'Signal decoded' : 'Already decoded'}</div>
       <div class="codeword">${STATIONS[currentStation].word}</div>
+      <div class="sub" style="margin-top:8px; color: var(--amber);">📝 Remember this letter: <b>${STATIONS[currentStation].word[0]}</b> — you'll need it at the end.</div>
       <div class="progress-row">
-        ${ALL_STATIONS.map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
+        ${[1,2,3,4,5].map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
       </div>
       <div class="next-line">Next stop: <b>${nextName}</b></div>
     </div>
   `;
 }
 
-function renderFinal(progress){
-  const words = ALL_STATIONS.map(i => STATIONS[i].word);
-  const phrase = words.join(' ');
-  const derivedCode = words.map(w => w[0]).join('').toUpperCase();
+const FINAL_PASSWORD = "WTTBF";
 
+function renderFinal(progress){
+  const phrase = [1,2,3,4,5].map(i => STATIONS[i].word).join(' ');
   content.innerHTML = `
     <div class="card final-card">
-      <div class="label">All 10 signals decoded</div>
+      <div class="label">All 5 signals decoded</div>
       <div class="final-phrase">"${phrase}"</div>
+      <div class="sub">Go show this screen to your host to lock in your finish time.</div>
 
       <div class="lock-box">
         <div class="lock-title">🔒 Final Transmission — Locked</div>
-        <div class="sub" style="margin-bottom:10px;">Take the first letter of each word above, in order. Enter that as your decryption key.</div>
+        <div class="sub" style="margin-bottom:10px;">Every station left behind a single letter. Line them up in order to unlock what's next.</div>
         <div class="lock-row">
           <input type="text" id="lockInput" placeholder="ENTER CODE" autocomplete="off" />
           <button id="lockBtn">Unlock</button>
@@ -510,12 +490,12 @@ function renderFinal(progress){
   const tryUnlock = async () => {
     const val = document.getElementById('lockInput').value.trim().toUpperCase();
     const lockMsg = document.getElementById('lockMsg');
-    if(val === derivedCode){
+    if(val === FINAL_PASSWORD){
       lockMsg.textContent = "";
       document.querySelector('.lock-box').style.display = 'none';
       await renderLeaderboard();
     } else {
-      lockMsg.textContent = "✕ Incorrect code. Check the order.";
+      lockMsg.textContent = "✕ Incorrect code.";
       lockMsg.className = "msg err";
     }
   };
@@ -531,7 +511,7 @@ async function renderLeaderboard(){
   for(const t of TEAMS){ all[t] = await getProgress(t); }
 
   const ranked = TEAMS
-    .filter(t => ALL_STATIONS.every(i => all[t][i]) && all[t].finishTime)
+    .filter(t => [1,2,3,4,5].every(i => all[t][i]) && all[t].finishTime)
     .sort((a,b) => all[a].finishTime - all[b].finishTime);
 
   target.innerHTML = `
@@ -550,14 +530,7 @@ async function renderLeaderboard(){
 }
 
 // ---------- HOST VIEW ----------
-const HOST_PASSCODE = "aiadmin26";
-
 async function renderHost(){
-  const entered = prompt("Host passcode:");
-  if(entered !== HOST_PASSCODE){
-    alert("Incorrect passcode.");
-    return;
-  }
   content.innerHTML = `<div class="card"><div class="label">Loading dashboard…</div></div>`;
   const all = {};
   for(const t of TEAMS){ all[t] = await getProgress(t); }
@@ -566,14 +539,14 @@ async function renderHost(){
     <div class="card">
       <div class="label">Host Dashboard</div>
       <table class="host-table">
-        <tr><th>Team</th>${ALL_STATIONS.map(i=>`<th>${i}</th>`).join('')}<th>Done</th></tr>
+        <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th></tr>
         ${TEAMS.map(t => {
           const p = all[t];
-          const doneCount = ALL_STATIONS.filter(i => p[i]).length;
+          const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
           return `<tr>
             <td><b>${t}</b></td>
-            ${ALL_STATIONS.map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
-            <td>${doneCount}/${ALL_STATIONS.length}</td>
+            ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
+            <td>${doneCount}/5</td>
           </tr>`;
         }).join('')}
       </table>
