@@ -269,34 +269,34 @@ const SEQUENCE = {
 
 const RIDDLES = {
   1: {
-    A: { q: "A professor grades 15 quizzes in batches of 5. Each batch takes 12 minutes, and she takes a 6-minute break between batches only (not after the last one). How many minutes to finish grading all 15?", a: ["48"] },
-    B: { q: "This desk has 3 stacked drawers. Each drawer holds twice as many files as the drawer above it. The top drawer holds 4 files. How many files in total across all 3 drawers?", a: ["28"] },
-    C: { q: "Unscramble these letters into what every professor hands back after checking your work: G R A D E S", a: ["grades"] },
-    D: { q: "5 faculty members are aged 30, 38, 41, 47, 52. One of them is older than exactly half the group and younger than the other half. What is that age?", a: ["41"] }
+    A: { q: "A professor grades 15 quizzes in batches of 5. Each batch takes 12 minutes, and she takes a 6-minute break between batches only (not after the last one). How many minutes to finish grading all 15?", a: ["48"], t: 180 },
+    B: { q: "This desk has 3 stacked drawers. Each drawer holds twice as many files as the drawer above it. The top drawer holds 4 files. How many files in total across all 3 drawers?", a: ["28"], t: 180 },
+    C: { q: "Unscramble these letters into what every professor hands back after checking your work: G R A D E S", a: ["grades"], t: 70 },
+    D: { q: "5 faculty members are aged 30, 38, 41, 47, 52. One of them is older than exactly half the group and younger than the other half. What is that age?", a: ["41"], t: 130 }
   },
   2: {
-    A: { q: "All 8 switches on this board are OFF at 9:00 AM. Starting at 9:15, one more switch is turned ON every 15 minutes, and none are ever turned off. How many are ON by 10:30 AM?", a: ["6"] },
-    B: { q: "A circuit blinks with a growing gap between flashes: 2, 4, 8, 16, __ seconds. How many seconds until the next flash?", a: ["32"] },
-    C: { q: "The word SWITCHBOARD hides a smaller 5-letter word meaning 'a spell caster' — reading the letters in order, no rearranging. Find it.", a: ["witch"] },
-    D: { q: "2 electricians wire 4 switchboards in 6 hours, all working at the same steady rate. At that same rate, how many hours would 3 electricians take to wire 9 switchboards?", a: ["9"] }
+    A: { q: "All 8 switches on this board are OFF at 9:00 AM. Starting at 9:15, one more switch is turned ON every 15 minutes, and none are ever turned off. How many are ON by 10:30 AM?", a: ["6"], t: 180 },
+    B: { q: "A circuit blinks with a growing gap between flashes: 2, 4, 8, 16, __ seconds. How many seconds until the next flash?", a: ["32"], t: 130 },
+    C: { q: "The word SWITCHBOARD hides a smaller 5-letter word meaning 'a spell caster' — reading the letters in order, no rearranging. Find it.", a: ["witch"], t: 90 },
+    D: { q: "2 electricians wire 4 switchboards in 6 hours, all working at the same steady rate. At that same rate, how many hours would 3 electricians take to wire 9 switchboards?", a: ["9"], t: 180 }
   },
   3: {
-    A: { q: "This floor has exactly 4 windows: 2 open, 2 closed. One closed window is opened, then one (different, currently open) window is closed. How many windows are open now?", a: ["2","two"] },
-    B: { q: "Unscramble these letters into a weather word: D N I W", a: ["wind"] },
-    C: { q: "A word has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"] },
-    D: { q: "Sunlight takes 8 minutes 20 seconds to travel from the Sun to a window. If it left the Sun at 3:47:10 PM, what time does it reach the glass? (HH:MM:SS)", a: ["3:55:30","15:55:30","3:55:30 pm"] }
+    A: { q: "This floor has exactly 4 windows: 2 open, 2 closed. One closed window is opened, then one (different, currently open) window is closed. How many windows are open now?", a: ["2","two"], t: 110 },
+    B: { q: "Unscramble these letters into a weather word: D N I W", a: ["wind"], t: 70 },
+    C: { q: "A word has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"], t: 130 },
+    D: { q: "Sunlight takes 8 minutes 20 seconds to travel from the Sun to a window. If it left the Sun at 3:47:10 PM, what time does it reach the glass? (HH:MM:SS)", a: ["3:55:30","15:55:30","3:55:30 pm"], t: 180 }
   },
   4: {
-    A: { q: "Sequence on the board: 2, 3, 5, 8, 13, __. What comes next?", a: ["21"] },
-    B: { q: "This board is wiped every 20 minutes during a 2-hour lecture. The lecturer starts 10 minutes late but the lecture still ends on time. How many wipes happen in total?", a: ["5","five"] },
-    C: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"] },
-    D: { q: "Marker colours available: RED, BLUE, BLACK, GREEN. The professor never uses RED. Today's diagram used exactly 2 colours, and neither was GREEN. Name the two colours used (any order).", a: ["blue black","black blue","blue, black","black, blue"] }
+    A: { q: "Sequence on the board: 2, 3, 5, 8, 13, __. What comes next?", a: ["21"], t: 110 },
+    B: { q: "This board is wiped every 20 minutes during a 2-hour lecture. The lecturer starts 10 minutes late but the lecture still ends on time. How many wipes happen in total?", a: ["5","five"], t: 180 },
+    C: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"], t: 130 },
+    D: { q: "Marker colours available: RED, BLUE, BLACK, GREEN. The professor never uses RED. Today's diagram used exactly 2 colours, and neither was GREEN. Name the two colours used (any order).", a: ["blue black","black blue","blue, black","black, blue"], t: 110 }
   },
   5: {
-    A: { q: "This notice board holds 6 pinned papers. Each day, 2 old papers are removed and 1 new one is pinned. Starting from 6, how many papers remain after 3 days?", a: ["3","three"] },
-    B: { q: "A greeting has been shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"] },
-    C: { q: "The standee here is 6 feet tall and casts a 9-foot shadow. At that same moment, a nearby pillar casts a 12-foot shadow. How tall is the pillar?", a: ["8","eight"] },
-    D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"] }
+    A: { q: "This notice board holds 6 pinned papers. Each day, 2 old papers are removed and 1 new one is pinned. Starting from 6, how many papers remain after 3 days?", a: ["3","three"], t: 180 },
+    B: { q: "A greeting has been shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"], t: 130 },
+    C: { q: "The standee here is 6 feet tall and casts a 9-foot shadow. At that same moment, a nearby pillar casts a 12-foot shadow. How tall is the pillar?", a: ["8","eight"], t: 130 },
+    D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"], t: 70 }
   }
 };
 
@@ -309,7 +309,7 @@ let currentTeam = null;
 
 const content = document.getElementById('content');
 const hostLink = document.getElementById('hostLink');
-hostLink.addEventListener('click', (e) => { e.preventDefault(); renderHost(); });
+hostLink.addEventListener('click', (e) => { e.preventDefault(); renderHostLogin(); });
 
 function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
 
@@ -407,8 +407,15 @@ function renderTeamSelect(){
       try{
         const claimSnap = await db.ref(`hunt/${t}/claimedBy`).get();
         if(claimSnap.exists() && claimSnap.val() !== DEVICE_ID){
-          const proceed = confirm(`Team ${t} is already being used on another phone. Only proceed if that's a mistake and this really is Team ${t}'s device.`);
-          if(!proceed) return;
+          content.innerHTML = `
+            <div class="card">
+              <div class="label" style="color: var(--danger);">🔒 Team ${t} is locked</div>
+              <div class="sub" style="margin:10px 0;">This team is already active on another phone. Only your host can release this lock.</div>
+              <button class="back-btn" id="backBtn2" style="margin:10px auto 0;">← choose another team</button>
+            </div>
+          `;
+          document.getElementById('backBtn2').addEventListener('click', renderTeamSelect);
+          return;
         } else if(!claimSnap.exists()){
           await db.ref(`hunt/${t}/claimedBy`).set(DEVICE_ID);
         }
@@ -450,7 +457,7 @@ async function renderRiddle(){
       <div class="progress-row">
         ${[1,2,3,4,5].map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
       </div>
-      <div class="timer-row"><span id="timerBadge">⏱ 01:30</span> <span class="timer-note">— no searching, use your team!</span></div>
+      <div class="timer-row"><span id="timerBadge">⏱ --:--</span> <span class="timer-note">— no searching, use your team!</span></div>
       <div class="riddle-text" style="margin-top:10px;">${riddle.q}</div>
       <input type="text" id="answerInput" placeholder="Type your answer…" autocomplete="off" />
       <div style="height:12px;"></div>
@@ -459,8 +466,9 @@ async function renderRiddle(){
     </div>
   `;
 
-  let timeLeft = 90;
+  let timeLeft = riddle.t || 90;
   const timerBadge = document.getElementById('timerBadge');
+  timerBadge.textContent = `⏱ ${String(Math.floor(timeLeft/60)).padStart(2,'0')}:${String(timeLeft%60).padStart(2,'0')}`;
   const timerInterval = setInterval(() => {
     timeLeft--;
     if(timeLeft <= 0){
@@ -621,6 +629,35 @@ async function renderLeaderboard(){
 }
 
 // ---------- HOST VIEW ----------
+const HOST_PASSWORD = "HOST2026";
+
+function renderHostLogin(){
+  content.innerHTML = `
+    <div class="card">
+      <div class="label">Host Login</div>
+      <div class="sub" style="margin:10px 0;">Enter the host password to access the dashboard.</div>
+      <input type="password" id="hostPassInput" placeholder="Password" autocomplete="off" />
+      <div style="height:12px;"></div>
+      <button class="submit" id="hostLoginBtn">Enter</button>
+      <div class="msg" id="hostLoginMsg"></div>
+      <button class="back-btn" id="backBtn3" style="margin:14px auto 0;">← back</button>
+    </div>
+  `;
+  const tryLogin = () => {
+    const val = document.getElementById('hostPassInput').value.trim();
+    if(val === HOST_PASSWORD){
+      renderHost();
+    } else {
+      const msg = document.getElementById('hostLoginMsg');
+      msg.textContent = "✕ Incorrect password.";
+      msg.className = "msg err";
+    }
+  };
+  document.getElementById('hostLoginBtn').addEventListener('click', tryLogin);
+  document.getElementById('hostPassInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') tryLogin(); });
+  document.getElementById('backBtn3').addEventListener('click', boot);
+}
+
 async function renderHost(){
   content.innerHTML = `<div class="card"><div class="label">Loading dashboard…</div></div>`;
   const all = {};
@@ -630,7 +667,7 @@ async function renderHost(){
     <div class="card">
       <div class="label">Host Dashboard</div>
       <table class="host-table">
-        <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th><th>Status</th><th></th></tr>
+        <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th><th>Status</th><th></th><th></th></tr>
         ${TEAMS.map(t => {
           const p = all[t];
           const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
@@ -641,6 +678,7 @@ async function renderHost(){
             <td>${doneCount}/5</td>
             <td style="${p.disqualified ? 'color: var(--danger);' : ''}">${status}</td>
             <td>${p.disqualified ? `<button class="reinstate-btn" data-team="${t}">Reinstate</button>` : ''}</td>
+            <td>${p.claimedBy ? `<button class="reinstate-btn" data-unlock-team="${t}">Unlock device</button>` : ''}</td>
           </tr>`;
         }).join('')}
       </table>
@@ -648,7 +686,7 @@ async function renderHost(){
     <button class="back-btn" id="backBtn">← back</button>
   `;
   document.getElementById('backBtn').addEventListener('click', boot);
-  document.querySelectorAll('.reinstate-btn').forEach(btn => {
+  document.querySelectorAll('.reinstate-btn[data-team]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const t = btn.getAttribute('data-team');
       const p = await getProgress(t);
