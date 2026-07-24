@@ -211,6 +211,18 @@
   }
   .lb-rank{ font-family: var(--mono); font-weight:700; }
   .lb-rank.gold{ color: var(--amber); }
+
+  .timer-row{ margin-top:14px; font-family: var(--mono); font-size:13px; }
+  #timerBadge{ color: var(--cyan); font-weight:700; }
+  #timerBadge.timer-warn{ color: var(--amber); }
+  #timerBadge.timer-over{ color: var(--danger); }
+  .timer-note{ color: var(--muted); font-size:11px; }
+  .reinstate-btn{
+    font-family: var(--mono); font-size:11px; letter-spacing:0.5px; text-transform:uppercase;
+    padding: 4px 10px; border-radius:6px; border:1px solid var(--cyan); background:transparent;
+    color: var(--cyan); cursor:pointer;
+  }
+  .reinstate-btn:hover{ background: var(--cyan); color:#031414; }
 </style>
 </head>
 <body>
@@ -257,33 +269,33 @@ const SEQUENCE = {
 
 const RIDDLES = {
   1: {
-    A: { q: "I have keys but no locks, space but no rooms, you can enter but can't go inside. What am I?", a: ["keyboard"] },
-    B: { q: "Double me and add 10, you get 50. What number am I?", a: ["20"] },
-    C: { q: "Attendance is taken every day except Sunday. Class started on a Monday. By the 21st day of class (not calendar day), how many Sundays have passed in between?", a: ["3","three"] },
-    D: { q: "Rearrange the letters of 'ELEVEN PLUS TWO' to form another sum. It should equal the same number.", a: ["twelve plus one"] }
+    A: { q: "A professor grades 15 quizzes in batches of 5. Each batch takes 12 minutes, and she takes a 6-minute break between batches only (not after the last one). How many minutes to finish grading all 15?", a: ["48"] },
+    B: { q: "This desk has 3 stacked drawers. Each drawer holds twice as many files as the drawer above it. The top drawer holds 4 files. How many files in total across all 3 drawers?", a: ["28"] },
+    C: { q: "Unscramble these letters into what every professor hands back after checking your work: G R A D E S", a: ["grades"] },
+    D: { q: "5 faculty members are aged 30, 38, 41, 47, 52. One of them is older than exactly half the group and younger than the other half. What is that age?", a: ["41"] }
   },
   2: {
-    A: { q: "The more you take, the more you leave behind. What am I?", a: ["footsteps"] },
-    B: { q: "A switchboard has 6 switches. Half of them are OFF. Then 2 more get switched OFF. How many are ON now?", a: ["1","one"] },
-    C: { q: "I'm an odd number. Take away one letter and I become even. What number am I?", a: ["seven"] },
-    D: { q: "A 5-letter spooky word is hiding inside the word SWITCHBOARD, letters in order, no rearranging. Find it.", a: ["witch"] }
+    A: { q: "All 8 switches on this board are OFF at 9:00 AM. Starting at 9:15, one more switch is turned ON every 15 minutes, and none are ever turned off. How many are ON by 10:30 AM?", a: ["6"] },
+    B: { q: "A circuit blinks with a growing gap between flashes: 2, 4, 8, 16, __ seconds. How many seconds until the next flash?", a: ["32"] },
+    C: { q: "The word SWITCHBOARD hides a smaller 5-letter word meaning 'a spell caster' — reading the letters in order, no rearranging. Find it.", a: ["witch"] },
+    D: { q: "2 electricians wire 4 switchboards in 6 hours, all working at the same steady rate. At that same rate, how many hours would 3 electricians take to wire 9 switchboards?", a: ["9"] }
   },
   3: {
-    A: { q: "Three windows are open, two are closed. If you close one open window and open one closed window, how many windows are open now?", a: ["3","three"] },
-    B: { q: "I'm always coming but never arrive. What am I?", a: ["wind"] },
-    C: { q: "What comes once in a minute, twice in a moment, but never in a thousand years?", a: ["letter m","m","the letter m"] },
-    D: { q: "A window is left open at an angle exactly halfway between fully shut (0°) and fully open (90°). What is that angle, in degrees?", a: ["45"] }
+    A: { q: "This floor has exactly 4 windows: 2 open, 2 closed. One closed window is opened, then one (different, currently open) window is closed. How many windows are open now?", a: ["2","two"] },
+    B: { q: "Unscramble these letters into a weather word: D N I W", a: ["wind"] },
+    C: { q: "A word has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"] },
+    D: { q: "Sunlight takes 8 minutes 20 seconds to travel from the Sun to a window. If it left the Sun at 3:47:10 PM, what time does it reach the glass? (HH:MM:SS)", a: ["3:55:30","15:55:30","3:55:30 pm"] }
   },
   4: {
-    A: { q: "A sequence appears: 1, 1, 2, 3, 5, 8, __. What's the next number?", a: ["13"] },
-    B: { q: "I'm written on, wiped off, and I never keep a secret. What am I?", a: ["whiteboard"] },
-    C: { q: "A whiteboard is wiped every 45 minutes during a 3-hour lecture, but the lecturer arrives 15 minutes late. How many wipes happen?", a: ["3","three"] },
-    D: { q: "Forward I'm heavy, backward I'm not. What am I?", a: ["ton"] }
+    A: { q: "Sequence on the board: 2, 3, 5, 8, 13, __. What comes next?", a: ["21"] },
+    B: { q: "This board is wiped every 20 minutes during a 2-hour lecture. The lecturer starts 10 minutes late but the lecture still ends on time. How many wipes happen in total?", a: ["5","five"] },
+    C: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"] },
+    D: { q: "Marker colours available: RED, BLUE, BLACK, GREEN. The professor never uses RED. Today's diagram used exactly 2 colours, and neither was GREEN. Name the two colours used (any order).", a: ["blue black","black blue","blue, black","black, blue"] }
   },
   5: {
-    A: { q: "Start at 5. Lose 1, gain 2, lose 1, gain 2. Where do you end up?", a: ["7","seven"] },
-    B: { q: "I stand tall, greet every guest, but I'm not alive. What am I?", a: ["standee"] },
-    C: { q: "What can travel around the world while staying in a corner?", a: ["stamp"] },
+    A: { q: "This notice board holds 6 pinned papers. Each day, 2 old papers are removed and 1 new one is pinned. Starting from 6, how many papers remain after 3 days?", a: ["3","three"] },
+    B: { q: "A greeting has been shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"] },
+    C: { q: "The standee here is 6 feet tall and casts a 9-foot shadow. At that same moment, a nearby pillar casts a 12-foot shadow. How tall is the pillar?", a: ["8","eight"] },
     D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"] }
   }
 };
@@ -300,6 +312,47 @@ const hostLink = document.getElementById('hostLink');
 hostLink.addEventListener('click', (e) => { e.preventDefault(); renderHost(); });
 
 function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+// ---------- ANTI-CHEAT: penalize leaving the app while a riddle is active ----------
+let awayTrackingActive = false;
+let awayViolationPending = false;
+
+document.addEventListener('visibilitychange', async () => {
+  if(!awayTrackingActive) return;
+  if(document.hidden){
+    awayViolationPending = true;
+    try{
+      const progress = await getProgress(currentTeam);
+      progress.violations = (progress.violations || 0) + 1;
+      if(progress.violations >= 2){
+        progress.disqualified = true;
+        progress.disqualifiedStation = currentStation;
+      }
+      await saveProgress(currentTeam, progress);
+    }catch(e){ console.error('violation tracking failed', e); }
+  } else if(awayViolationPending){
+    awayViolationPending = false;
+    awayTrackingActive = false;
+    const progress = await getProgress(currentTeam);
+    if(progress.disqualified){
+      renderDisqualified(progress);
+    } else if(progress.violations >= 1){
+      renderWarning(progress.violations);
+    }
+  }
+});
+
+function renderWarning(count){
+  content.innerHTML = `
+    <div class="card">
+      <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
+      <div class="label" style="margin-top:10px; color: var(--amber);">⚠️ Warning ${count}/2</div>
+      <div class="sub" style="margin:10px 0;">You left the app while a signal was active. One more time and your team is disqualified.</div>
+      <button class="submit" id="continueBtn">Continue</button>
+    </div>
+  `;
+  document.getElementById('continueBtn').addEventListener('click', renderRiddle);
+}
 
 async function getProgress(team){
   try{
@@ -371,6 +424,11 @@ async function renderRiddle(){
   content.innerHTML = `<div class="card"><div class="label">Loading signal…</div></div>`;
   const progress = await getProgress(currentTeam);
 
+  if(progress.disqualified){
+    renderDisqualified();
+    return;
+  }
+
   if(progress[currentStation]){
     renderAlreadySolved(progress);
     return;
@@ -392,7 +450,8 @@ async function renderRiddle(){
       <div class="progress-row">
         ${[1,2,3,4,5].map(i => `<div class="progress-dot ${progress[i] ? 'done':''}"></div>`).join('')}
       </div>
-      <div class="riddle-text" style="margin-top:16px;">${riddle.q}</div>
+      <div class="timer-row"><span id="timerBadge">⏱ 01:30</span> <span class="timer-note">— no searching, use your team!</span></div>
+      <div class="riddle-text" style="margin-top:10px;">${riddle.q}</div>
       <input type="text" id="answerInput" placeholder="Type your answer…" autocomplete="off" />
       <div style="height:12px;"></div>
       <button class="submit" id="submitBtn">Transmit Answer</button>
@@ -400,12 +459,32 @@ async function renderRiddle(){
     </div>
   `;
 
+  let timeLeft = 90;
+  const timerBadge = document.getElementById('timerBadge');
+  const timerInterval = setInterval(() => {
+    timeLeft--;
+    if(timeLeft <= 0){
+      timerBadge.textContent = "⏱ Time's up!";
+      timerBadge.classList.add('timer-over');
+      clearInterval(timerInterval);
+    } else {
+      const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+      const s = String(timeLeft%60).padStart(2,'0');
+      timerBadge.textContent = `⏱ ${m}:${s}`;
+      if(timeLeft <= 15) timerBadge.classList.add('timer-warn');
+    }
+  }, 1000);
+
+  awayTrackingActive = true;
+
   const submit = async () => {
     const val = normalize(document.getElementById('answerInput').value);
     const msgBox = document.getElementById('msgBox');
     if(!val){ return; }
     const accepted = riddle.a.map(normalize);
     if(accepted.includes(val)){
+      awayTrackingActive = false;
+      clearInterval(timerInterval);
       progress[currentStation] = STATIONS[currentStation].word;
       const doneCount = [1,2,3,4,5].filter(i => progress[i]).length;
       if(doneCount === 5 && !progress.finishTime){
@@ -430,6 +509,18 @@ function renderWrongStation(nextStation){
       <div class="label" style="margin-top:10px; color: var(--danger);">Out of order</div>
       <div class="sub" style="margin:10px 0 4px;">This isn't your next stop. No skipping signals — head to your actual next station first.</div>
       <div class="next-line">Go to: <b>Station ${nextStation} · ${nextName}</b></div>
+      <button class="back-btn" id="backToTeamBtn" style="margin:18px auto 0;">← wrong team?</button>
+    </div>
+  `;
+  document.getElementById('backToTeamBtn').addEventListener('click', renderTeamSelect);
+}
+
+function renderDisqualified(progress){
+  content.innerHTML = `
+    <div class="card">
+      <div class="station-tag">Team ${currentTeam}</div>
+      <div class="label" style="margin-top:10px; color: var(--danger);">🚫 Disqualified</div>
+      <div class="sub" style="margin:10px 0 4px;">This team left the app while a question was unanswered${progress.disqualifiedStation ? ` (Station ${progress.disqualifiedStation})` : ''}, more than once. The run has ended — please find your host.</div>
       <button class="back-btn" id="backToTeamBtn" style="margin:18px auto 0;">← wrong team?</button>
     </div>
   `;
@@ -539,14 +630,17 @@ async function renderHost(){
     <div class="card">
       <div class="label">Host Dashboard</div>
       <table class="host-table">
-        <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th></tr>
+        <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th><th>Status</th><th></th></tr>
         ${TEAMS.map(t => {
           const p = all[t];
           const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
+          const status = p.disqualified ? `🚫 DQ (station ${p.disqualifiedStation || '?'})` : (p.violations >= 1 ? `⚠️ 1 warning` : '✓ active');
           return `<tr>
             <td><b>${t}</b></td>
             ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
             <td>${doneCount}/5</td>
+            <td style="${p.disqualified ? 'color: var(--danger);' : ''}">${status}</td>
+            <td>${p.disqualified ? `<button class="reinstate-btn" data-team="${t}">Reinstate</button>` : ''}</td>
           </tr>`;
         }).join('')}
       </table>
@@ -554,6 +648,18 @@ async function renderHost(){
     <button class="back-btn" id="backBtn">← back</button>
   `;
   document.getElementById('backBtn').addEventListener('click', boot);
+  document.querySelectorAll('.reinstate-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const t = btn.getAttribute('data-team');
+      const p = await getProgress(t);
+      delete p.disqualified;
+      delete p.disqualifiedStation;
+      delete p.disqualifiedAt;
+      p.violations = 0;
+      await saveProgress(t, p);
+      renderHost();
+    });
+  });
 }
 
 // ---------- BOOT ----------
