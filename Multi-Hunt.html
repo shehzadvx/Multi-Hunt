@@ -337,12 +337,16 @@ document.addEventListener('visibilitychange', async () => {
     if(progress.disqualified){
       renderDisqualified(progress);
     } else if(progress.violations >= 1){
-      renderWarning(progress.violations);
+      renderWarning(progress.violations, async () => {
+        progress.violationSeen = progress.violations;
+        await saveProgress(currentTeam, progress);
+        renderRiddle();
+      });
     }
   }
 });
 
-function renderWarning(count){
+function renderWarning(count, onContinue){
   content.innerHTML = `
     <div class="card">
       <div class="station-tag">Station ${currentStation} · Team ${currentTeam}</div>
@@ -351,7 +355,7 @@ function renderWarning(count){
       <button class="submit" id="continueBtn">Continue</button>
     </div>
   `;
-  document.getElementById('continueBtn').addEventListener('click', renderRiddle);
+  document.getElementById('continueBtn').addEventListener('click', onContinue || renderRiddle);
 }
 
 async function getProgress(team){
@@ -432,7 +436,16 @@ async function renderRiddle(){
   const progress = await getProgress(currentTeam);
 
   if(progress.disqualified){
-    renderDisqualified();
+    renderDisqualified(progress);
+    return;
+  }
+
+  if(progress.violations >= 1 && (progress.violationSeen || 0) < progress.violations){
+    renderWarning(progress.violations, async () => {
+      progress.violationSeen = progress.violations;
+      await saveProgress(currentTeam, progress);
+      renderRiddle();
+    });
     return;
   }
 
