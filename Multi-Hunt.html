@@ -256,8 +256,8 @@ const STATIONS = {
   1: { name: "Faculty Desk", word: "WELCOME" },
   2: { name: "Switchboard", word: "TO" },
   3: { name: "Windows", word: "THE" },
-  4: { name: "Whiteboard", word: "BCA AI" },
-  5: { name: "Notice Board & Standee", word: "FAMILY" }
+  4: { name: "Whiteboard", word: "BCA(AI) & MCA" },
+  5: { name: "Notice Board & Standee", word: "INDUCTION" }
 };
 
 const SEQUENCE = {
@@ -671,47 +671,83 @@ function renderHostLogin(){
   document.getElementById('backBtn3').addEventListener('click', boot);
 }
 
-async function renderHost(){
-  content.innerHTML = `<div class="card"><div class="label">Loading dashboard…</div></div>`;
-  const all = {};
-  for(const t of TEAMS){ all[t] = await getProgress(t); }
+let hostListenerRef = null;
 
-  content.innerHTML = `
-    <div class="card">
-      <div class="label">Host Dashboard</div>
-      <table class="host-table">
-        <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th><th>Status</th><th></th><th></th></tr>
-        ${TEAMS.map(t => {
-          const p = all[t];
-          const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
-          const status = p.disqualified ? `🚫 DQ (station ${p.disqualifiedStation || '?'})` : (p.violations >= 1 ? `⚠️ 1 warning` : '✓ active');
-          return `<tr>
-            <td><b>${t}</b></td>
-            ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
-            <td>${doneCount}/5</td>
-            <td style="${p.disqualified ? 'color: var(--danger);' : ''}">${status}</td>
-            <td>${p.disqualified ? `<button class="reinstate-btn" data-team="${t}">Reinstate</button>` : ''}</td>
-            <td>${p.claimedBy ? `<button class="reinstate-btn" data-unlock-team="${t}">Unlock device</button>` : ''}</td>
-          </tr>`;
-        }).join('')}
-      </table>
-    </div>
-    <button class="back-btn" id="backBtn">← back</button>
-  `;
-  document.getElementById('backBtn').addEventListener('click', boot);
-  document.querySelectorAll('.reinstate-btn[data-team]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const t = btn.getAttribute('data-team');
-      const p = await getProgress(t);
-      delete p.disqualified;
-      delete p.disqualifiedStation;
-      delete p.disqualifiedAt;
-      p.violations = 0;
-      await saveProgress(t, p);
-      renderHost();
+function renderHost(){
+  content.innerHTML = `<div class="card"><div class="label">Loading dashboard…</div></div>`;
+
+  if(hostListenerRef) hostListenerRef.off();
+  hostListenerRef = db.ref('hunt');
+
+  hostListenerRef.on('value', (snap) => {
+    const raw = snap.val() || {};
+    const all = {};
+    TEAMS.forEach(t => { all[t] = raw[t] || {}; });
+
+    content.innerHTML = `
+      <div class="card">
+        <div class="label">Host Dashboard <span style="color:var(--cyan); font-size:11px;">● live</span></div>
+        <table class="host-table">
+          <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th><th>Status</th><th></th><th></th></tr>
+          ${TEAMS.map(t => {
+            const p = all[t];
+            const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
+            const status = p.disqualified ? `🚫 DQ (station ${p.disqualifiedStation || '?'})` : (p.violations >= 1 ? `⚠️ ${p.violations} warning` : '✓ active');
+            return `<tr>
+              <td><b>${t}</b></td>
+              ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
+              <td>${doneCount}/5</td>
+              <td style="${p.disqualified ? 'color: var(--danger);' : ''}">${status}</td>
+              <td>${p.disqualified ? `<button class="reinstate-btn" data-team="${t}">Reinstate</button>` : ''}</td>
+              <td>${p.claimedBy ? `<button class="reinstate-btn" data-unlock-team="${t}">Unlock device</button>` : ''}</td>
+            </tr>`;
+          }).join('')}
+        </table>
+      </div>
+      <button class="back-btn" id="backBtn">← back</button>
+    `;
+    document.getElementById('backBtn').addEventListener('click', () => {
+      if(hostListenerRef){ hostListenerRef.off(); hostListenerRef = null; }
+      boot();
+    });
+    document.querySelectorAll('.reinstate-btn[data-team]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const t = btn.getAttribute('data-team');
+        const p = await getProgress(t);
+        delete p.disqualified;
+        delete p.disqualifiedStation;
+        delete p.disqualifiedAt;
+        p.violations = 0;
+        p.violationSeen = 0;
+        await saveProgress(t, p);
+      });
+    });
+    document.querySelectorAll('.reinstate-btn[data-unlock-team]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const t = btn.getAttribute('data-unlock-team');
+        const p = await getProgress(t);
+        delete p.claimedBy;
+        await saveProgress(t, p);
+      });
     });
   });
 }
+
+// Catches browser back/forward navigation restoring the page from cache,
+// which skips a normal reload — re-check for pending warnings/DQ here too.
+window.addEventListener('pageshow', async () => {
+  if(!currentTeam) return;
+  const progress = await getProgress(currentTeam);
+  if(progress.disqualified){
+    renderDisqualified(progress);
+  } else if(progress.violations >= 1 && (progress.violationSeen || 0) < progress.violations){
+    renderWarning(progress.violations, async () => {
+      progress.violationSeen = progress.violations;
+      await saveProgress(currentTeam, progress);
+      renderRiddle();
+    });
+  }
+});
 
 // ---------- BOOT ----------
 function boot(){
