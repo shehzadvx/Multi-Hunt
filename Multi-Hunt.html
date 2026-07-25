@@ -317,7 +317,7 @@ const RIDDLES = {
     D: { q: "4 marker colours are available: RED, BLUE, BLACK, GREEN. Today's diagram used only 1 colour, and it wasn't RED, GREEN, or BLACK. Which colour was used?", a: ["blue"], t: 75 }
   },
   5: {
-    A: { q: "This notice board holds 5 pinned papers. Each day, 1 old paper is removed and 2 new ones are pinned. Starting from 5, how many papers are on the board after 2 days?", a: ["8"], t: 100 },
+    A: { q: "This notice board holds 5 pinned papers. Each day, 1 old paper is removed and 2 new ones are pinned. Starting from 5, how many papers are on the board after 2 days?", a: ["7"], t: 100 },
     B: { q: "A greeting has been shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"], t: 90 },
     C: { q: "The standee here is 5 feet tall and casts a 5-foot shadow. At that same moment, a nearby pillar casts an 8-foot shadow. How tall is the pillar?", a: ["8","eight"], t: 90 },
     D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"], t: 60 }
@@ -516,21 +516,48 @@ async function renderRiddle(){
   `;
 
   let timeLeft = riddle.t || 90;
+  let retryUsed = false;
+  let timerInterval;
   const timerBadge = document.getElementById('timerBadge');
-  timerBadge.textContent = `⏱ ${String(Math.floor(timeLeft/60)).padStart(2,'0')}:${String(timeLeft%60).padStart(2,'0')}`;
-  const timerInterval = setInterval(() => {
-    timeLeft--;
-    if(timeLeft <= 0){
-      timerBadge.textContent = "⏱ Time's up!";
-      timerBadge.classList.add('timer-over');
-      clearInterval(timerInterval);
-    } else {
-      const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
-      const s = String(timeLeft%60).padStart(2,'0');
-      timerBadge.textContent = `⏱ ${m}:${s}`;
-      if(timeLeft <= 15) timerBadge.classList.add('timer-warn');
-    }
-  }, 1000);
+  const answerInputEl = document.getElementById('answerInput');
+  const submitBtnEl = document.getElementById('submitBtn');
+
+  const updateBadge = () => {
+    const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+    const s = String(timeLeft%60).padStart(2,'0');
+    timerBadge.textContent = `⏱ ${m}:${s}`;
+    timerBadge.classList.remove('timer-warn');
+    if(timeLeft <= 15) timerBadge.classList.add('timer-warn');
+  };
+  updateBadge();
+
+  const startTimer = () => {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      if(timeLeft <= 0){
+        clearInterval(timerInterval);
+        if(!retryUsed){
+          retryUsed = true;
+          timeLeft = riddle.t || 90;
+          timerBadge.classList.remove('timer-over');
+          const msgBox = document.getElementById('msgBox');
+          if(msgBox) msgBox.textContent = "⏱ Time's up — one retry granted, timer restarted.";
+          updateBadge();
+          startTimer();
+        } else {
+          timerBadge.textContent = "⏱ Locked";
+          timerBadge.classList.add('timer-over');
+          if(answerInputEl) answerInputEl.disabled = true;
+          if(submitBtnEl) submitBtnEl.disabled = true;
+          const msgBox = document.getElementById('msgBox');
+          if(msgBox) msgBox.textContent = "🔒 Out of time. Rescan this station's QR to get a fresh attempt.";
+        }
+      } else {
+        updateBadge();
+      }
+    }, 1000);
+  };
+  startTimer();
 
   awayTrackingActive = true;
 
