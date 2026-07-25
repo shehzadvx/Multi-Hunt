@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIGNAL // BCA AI Induction Hunt</title>
+<title>SIGNAL // BCA AI & MCA Induction Hunt</title>
 <style>
   :root{
     --bg: #0B0F14;
@@ -228,7 +228,7 @@
 <body>
 <div class="scanlines"></div>
 <div class="wrap" id="app">
-  <div class="brand"><span class="dot"></span> SIGNAL // BCA AI INDUCTION</div>
+  <div class="brand"><span class="dot"></span> SIGNAL // BCA AI &amp; MCA INDUCTION</div>
   <h1>Decode the <span>signal</span>.</h1>
   <div class="sub">Every station broadcasts something different to every team. Scan, solve, move.</div>
   <div id="content"></div>
@@ -293,34 +293,34 @@ const SEQUENCE = {
 
 const RIDDLES = {
   1: {
-    A: { q: "A professor grades 15 quizzes in batches of 5. Each batch takes 12 minutes, and she takes a 6-minute break between batches only (not after the last one). How many minutes to finish grading all 15?", a: ["48"], t: 180 },
-    B: { q: "This desk has 3 stacked drawers. Each drawer holds twice as many files as the drawer above it. The top drawer holds 4 files. How many files in total across all 3 drawers?", a: ["28"], t: 180 },
-    C: { q: "Unscramble these letters into what every professor hands back after checking your work: G R A D E S", a: ["grades"], t: 70 },
-    D: { q: "5 faculty members are aged 30, 38, 41, 47, 52. One of them is older than exactly half the group and younger than the other half. What is that age?", a: ["41"], t: 130 }
+    A: { q: "A professor grades 20 quizzes in 2 equal batches. Each batch takes 15 minutes, plus one 5-minute break between the two batches. How many minutes in total?", a: ["35"], t: 120 },
+    B: { q: "This desk has 2 drawers. The bottom drawer holds twice as many files as the top one. The top drawer holds 6 files. How many files in total across both drawers?", a: ["18"], t: 100 },
+    C: { q: "Unscramble these letters into what every professor hands back after checking your work: G R A D E S", a: ["grades"], t: 60 },
+    D: { q: "5 students are aged 18, 19, 20, 21, 22. What is the middle (median) age of the group?", a: ["20"], t: 60 }
   },
   2: {
-    A: { q: "All 8 switches on this board are OFF at 9:00 AM. Starting at 9:15, one more switch is turned ON every 15 minutes, and none are ever turned off. How many are ON by 10:30 AM?", a: ["6"], t: 180 },
-    B: { q: "A circuit blinks with a growing gap between flashes: 2, 4, 8, 16, __ seconds. How many seconds until the next flash?", a: ["32"], t: 130 },
-    C: { q: "The word SWITCHBOARD hides a smaller 5-letter word meaning 'a spell caster' — reading the letters in order, no rearranging. Find it.", a: ["witch"], t: 90 },
-    D: { q: "2 electricians wire 4 switchboards in 6 hours, all working at the same steady rate. At that same rate, how many hours would 3 electricians take to wire 9 switchboards?", a: ["9"], t: 180 }
+    A: { q: "6 switches on this board are all OFF at 9:00 AM. Starting at 9:10, one more switch is turned ON every 10 minutes. How many are ON by 9:40 AM?", a: ["4"], t: 100 },
+    B: { q: "A circuit blinks with a growing gap between flashes: 2, 4, 8, 16, __ seconds. How many seconds until the next flash?", a: ["32"], t: 90 },
+    C: { q: "The word SWITCHBOARD hides a smaller 5-letter word meaning 'a spell caster' — reading the letters in order, no rearranging. Find it.", a: ["witch"], t: 75 },
+    D: { q: "3 electricians wire 6 switchboards in 3 hours, working at a steady rate. At that same rate, how many switchboards could they wire in 6 hours?", a: ["12"], t: 100 }
   },
   3: {
-    A: { q: "This floor has exactly 4 windows: 2 open, 2 closed. One closed window is opened, then one (different, currently open) window is closed. How many windows are open now?", a: ["2","two"], t: 110 },
-    B: { q: "Unscramble these letters into a weather word: D N I W", a: ["wind"], t: 70 },
-    C: { q: "A word has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"], t: 130 },
-    D: { q: "Sunlight takes 8 minutes 20 seconds to travel from the Sun to a window. If it left the Sun at 3:47:10 PM, what time does it reach the glass? (HH:MM:SS)", a: ["3:55:30","15:55:30","3:55:30 pm"], t: 180 }
+    A: { q: "This floor has exactly 4 windows: 2 open, 2 closed. One closed window is opened, then one (different, currently open) window is closed. How many windows are open now?", a: ["2","two"], t: 90 },
+    B: { q: "Unscramble these letters into a weather word: D N I W", a: ["wind"], t: 60 },
+    C: { q: "A word has been shifted back by 1 letter: PVUTJEF. Shift every letter forward by 1 to decode it.", a: ["outside"], t: 100 },
+    D: { q: "Sunlight takes about 8 minutes to reach Earth. If it leaves the Sun at 4:00 PM, what time does it reach a window? (e.g. 4:08 PM)", a: ["4:08","4:08 pm","16:08"], t: 90 }
   },
   4: {
-    A: { q: "Sequence on the board: 2, 3, 5, 8, 13, __. What comes next?", a: ["21"], t: 110 },
-    B: { q: "This board is wiped every 20 minutes during a 2-hour lecture. The lecturer starts 10 minutes late but the lecture still ends on time. How many wipes happen in total?", a: ["5","five"], t: 180 },
-    C: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"], t: 130 },
-    D: { q: "Marker colours available: RED, BLUE, BLACK, GREEN. The professor never uses RED. Today's diagram used exactly 2 colours, and neither was GREEN. Name the two colours used (any order).", a: ["blue black","black blue","blue, black","black, blue"], t: 110 }
+    A: { q: "Sequence on the board: 2, 3, 5, 8, 13, __. What comes next?", a: ["21"], t: 90 },
+    B: { q: "This board is wiped every 15 minutes during a 1-hour class, with the first wipe happening at the 15-minute mark. How many times is it wiped in total?", a: ["4","four"], t: 100 },
+    C: { q: "A code appears, each letter shifted forward by 2 from the original: OCVJ. Shift every letter back by 2 to find the subject taught at this very spot.", a: ["math"], t: 100 },
+    D: { q: "4 marker colours are available: RED, BLUE, BLACK, GREEN. Today's diagram used only 1 colour, and it wasn't RED, GREEN, or BLACK. Which colour was used?", a: ["blue"], t: 75 }
   },
   5: {
-    A: { q: "This notice board holds 6 pinned papers. Each day, 2 old papers are removed and 1 new one is pinned. Starting from 6, how many papers remain after 3 days?", a: ["3","three"], t: 180 },
-    B: { q: "A greeting has been shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"], t: 130 },
-    C: { q: "The standee here is 6 feet tall and casts a 9-foot shadow. At that same moment, a nearby pillar casts a 12-foot shadow. How tall is the pillar?", a: ["8","eight"], t: 130 },
-    D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"], t: 70 }
+    A: { q: "This notice board holds 5 pinned papers. Each day, 1 old paper is removed and 2 new ones are pinned. Starting from 5, how many papers are on the board after 2 days?", a: ["8"], t: 100 },
+    B: { q: "A greeting has been shifted forward by 3 letters: KHOOR. Shift every letter back by 3 to decode it.", a: ["hello"], t: 90 },
+    C: { q: "The standee here is 5 feet tall and casts a 5-foot shadow. At that same moment, a nearby pillar casts an 8-foot shadow. How tall is the pillar?", a: ["8","eight"], t: 90 },
+    D: { q: "Take the first letters of: Notice, Outside, Time, Entry. What 4-letter word do you get?", a: ["note"], t: 60 }
   }
 };
 
