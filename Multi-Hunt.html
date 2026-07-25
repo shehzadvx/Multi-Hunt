@@ -333,7 +333,7 @@ let currentTeam = null;
 
 const content = document.getElementById('content');
 const hostLink = document.getElementById('hostLink');
-hostLink.addEventListener('click', (e) => { e.preventDefault(); renderHostLogin(); });
+hostLink.addEventListener('click', (e) => { e.preventDefault(); renderHost(); });
 
 function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
 
@@ -704,35 +704,7 @@ async function renderLeaderboard(){
   `;
 }
 
-// ---------- HOST VIEW ----------
-const HOST_PASSWORD = "HOST2026";
-
-function renderHostLogin(){
-  content.innerHTML = `
-    <div class="card">
-      <div class="label">Host Login</div>
-      <div class="sub" style="margin:10px 0;">Enter the host password to access the dashboard.</div>
-      <input type="password" id="hostPassInput" placeholder="Password" autocomplete="off" />
-      <div style="height:12px;"></div>
-      <button class="submit" id="hostLoginBtn">Enter</button>
-      <div class="msg" id="hostLoginMsg"></div>
-      <button class="back-btn" id="backBtn3" style="margin:14px auto 0;">← back</button>
-    </div>
-  `;
-  const tryLogin = () => {
-    const val = document.getElementById('hostPassInput').value.trim();
-    if(val === HOST_PASSWORD){
-      renderHost();
-    } else {
-      const msg = document.getElementById('hostLoginMsg');
-      msg.textContent = "✕ Incorrect password.";
-      msg.className = "msg err";
-    }
-  };
-  document.getElementById('hostLoginBtn').addEventListener('click', tryLogin);
-  document.getElementById('hostPassInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') tryLogin(); });
-  document.getElementById('backBtn3').addEventListener('click', boot);
-}
+// ---------- HOST VIEW (now public: no password) ----------
 
 let hostListenerRef = null;
 
@@ -751,7 +723,7 @@ function renderHost(){
       <div class="card">
         <div class="label">Host Dashboard <span style="color:var(--cyan); font-size:11px;">● live</span></div>
         <table class="host-table">
-          <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th><th>Status</th><th></th><th></th></tr>
+          <tr><th>Team</th>${[1,2,3,4,5].map(i=>`<th>${i}</th>`).join('')}<th>Done</th><th>Status</th></tr>
           ${TEAMS.map(t => {
             const p = all[t];
             const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
@@ -763,8 +735,6 @@ function renderHost(){
               ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
               <td>${doneCount}/5</td>
               <td style="${isDQ ? 'color: var(--danger);' : ''}">${status}</td>
-              <td>${isDQ ? `<button class="reinstate-btn" data-team="${t}">Reinstate</button>` : ''}</td>
-              <td>${p.claimedBy ? `<button class="reinstate-btn" data-unlock-team="${t}">Unlock device</button>` : ''}</td>
             </tr>`;
           }).join('')}
         </table>
@@ -774,27 +744,6 @@ function renderHost(){
     document.getElementById('backBtn').addEventListener('click', () => {
       if(hostListenerRef){ hostListenerRef.off(); hostListenerRef = null; }
       boot();
-    });
-    document.querySelectorAll('.reinstate-btn[data-team]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const t = btn.getAttribute('data-team');
-        const p = await getProgress(t);
-        delete p.disqualified;
-        delete p.disqualifiedStation;
-        delete p.disqualifiedAt;
-        delete p.violationEvents;
-        p.violations = 0;
-        p.violationSeen = 0;
-        await saveProgress(t, p);
-      });
-    });
-    document.querySelectorAll('.reinstate-btn[data-unlock-team]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const t = btn.getAttribute('data-unlock-team');
-        const p = await getProgress(t);
-        delete p.claimedBy;
-        await saveProgress(t, p);
-      });
     });
   });
 }
