@@ -259,15 +259,17 @@ const DB_URL = "https://multi-hunt-default-rtdb.asia-southeast1.firebasedatabase
 function sendViolationBeacon(team, station){
   const url = `${DB_URL}/hunt/${team}/violationEvents.json`;
   const payload = JSON.stringify({ station: station, time: Date.now() });
+  let queued = false;
   try{
-    const ok = navigator.sendBeacon(url, new Blob([payload], { type: 'text/plain' }));
-    if(!ok) console.error('sendBeacon queue failed');
+    queued = navigator.sendBeacon(url, new Blob([payload], { type: 'text/plain' }));
   }catch(e){ console.error('violation beacon failed', e); }
-  // Backup path in case sendBeacon is blocked/unsupported on this browser —
-  // fetch with keepalive is also designed to survive the page backgrounding.
-  try{
-    fetch(url, { method: 'POST', body: payload, keepalive: true, headers: { 'Content-Type': 'text/plain' } });
-  }catch(e){ console.error('keepalive fetch failed', e); }
+  // Only fall back to fetch if sendBeacon genuinely failed to queue —
+  // firing both unconditionally double-logs a single leave as 2 violations.
+  if(!queued){
+    try{
+      fetch(url, { method: 'POST', body: payload, keepalive: true, headers: { 'Content-Type': 'text/plain' } });
+    }catch(e){ console.error('keepalive fetch failed', e); }
+  }
 }
 function violationCount(progress){
   if(progress.violationEvents) return Object.keys(progress.violationEvents).length;
