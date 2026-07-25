@@ -257,11 +257,17 @@ const db = firebase.database();
 // exactly this (page hidden/unloading), so violation writes use it instead.
 const DB_URL = "https://multi-hunt-default-rtdb.asia-southeast1.firebasedatabase.app";
 function sendViolationBeacon(team, station){
+  const url = `${DB_URL}/hunt/${team}/violationEvents.json`;
+  const payload = JSON.stringify({ station: station, time: Date.now() });
   try{
-    const url = `${DB_URL}/hunt/${team}/violationEvents.json`;
-    const payload = JSON.stringify({ station: station, time: Date.now() });
-    navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
+    const ok = navigator.sendBeacon(url, new Blob([payload], { type: 'text/plain' }));
+    if(!ok) console.error('sendBeacon queue failed');
   }catch(e){ console.error('violation beacon failed', e); }
+  // Backup path in case sendBeacon is blocked/unsupported on this browser —
+  // fetch with keepalive is also designed to survive the page backgrounding.
+  try{
+    fetch(url, { method: 'POST', body: payload, keepalive: true, headers: { 'Content-Type': 'text/plain' } });
+  }catch(e){ console.error('keepalive fetch failed', e); }
 }
 function violationCount(progress){
   if(progress.violationEvents) return Object.keys(progress.violationEvents).length;
@@ -608,7 +614,7 @@ function renderAlreadySolved(progress, justSolved){
   `;
 }
 
-const FINAL_PASSWORD = "WTTBF";
+const FINAL_PASSWORD = "WTTBMF";
 
 function renderFinal(progress){
   const phrase = [1,2,3,4,5].map(i => STATIONS[i].word).join(' ');
