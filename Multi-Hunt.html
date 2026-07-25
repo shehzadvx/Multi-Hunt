@@ -251,6 +251,30 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// Mobile browsers can suspend a tab's JS almost immediately after it's
+// backgrounded — an in-flight `await db.ref(...).set(...)` can get cut off
+// before it reaches the network. sendBeacon is built specifically to survive
+// exactly this (page hidden/unloading), so violation writes use it instead.
+const DB_URL = "https://multi-hunt-default-rtdb.asia-southeast1.firebasedatabase.app";
+function sendViolationBeacon(team, station){
+  try{
+    const url = `${DB_URL}/hunt/${team}/violationEvents.json`;
+    const payload = JSON.stringify({ station: station, time: Date.now() });
+    navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
+  }catch(e){ console.error('violation beacon failed', e); }
+}
+function violationCount(progress){
+  if(progress.violationEvents) return Object.keys(progress.violationEvents).length;
+  return progress.violations || 0;
+}
+function lastViolationStation(progress){
+  if(progress.violationEvents){
+    const keys = Object.keys(progress.violationEvents);
+    if(keys.length) return progress.violationEvents[keys[keys.length - 1]].station;
+  }
+  return progress.disqualifiedStation || null;
+}
+
 // ---------- DATA ----------
 const STATIONS = {
   1: { name: "Faculty Desk", word: "WELCOME" },
@@ -317,32 +341,28 @@ function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
 let awayTrackingActive = false;
 let awayViolationPending = false;
 
-document.addEventListener('visibilitychange', async () => {
+document.addEventListener('visibilitychange', () => {
   if(!awayTrackingActive) return;
   if(document.hidden){
     awayViolationPending = true;
-    try{
-      const progress = await getProgress(currentTeam);
-      progress.violations = (progress.violations || 0) + 1;
-      if(progress.violations >= 2){
-        progress.disqualified = true;
-        progress.disqualifiedStation = currentStation;
-      }
-      await saveProgress(currentTeam, progress);
-    }catch(e){ console.error('violation tracking failed', e); }
+    sendViolationBeacon(currentTeam, currentStation);
   } else if(awayViolationPending){
     awayViolationPending = false;
     awayTrackingActive = false;
-    const progress = await getProgress(currentTeam);
-    if(progress.disqualified){
-      renderDisqualified(progress);
-    } else if(progress.violations >= 1){
-      renderWarning(progress.violations, async () => {
-        progress.violationSeen = progress.violations;
-        await saveProgress(currentTeam, progress);
-        renderRiddle();
-      });
-    }
+    (async () => {
+      const progress = await getProgress(currentTeam);
+      const count = violationCount(progress);
+      if(count >= 2){
+        progress.disqualifiedStation = lastViolationStation(progress);
+        renderDisqualified(progress);
+      } else if(count >= 1){
+        renderWarning(count, async () => {
+          progress.violationSeen = count;
+          await saveProgress(currentTeam, progress);
+          renderRiddle();
+        });
+      }
+    })();
   }
 });
 
@@ -435,14 +455,16 @@ async function renderRiddle(){
   content.innerHTML = `<div class="card"><div class="label">Loading signal…</div></div>`;
   const progress = await getProgress(currentTeam);
 
-  if(progress.disqualified){
+  const vCount = violationCount(progress);
+  if(vCount >= 2){
+    progress.disqualifiedStation = lastViolationStation(progress);
     renderDisqualified(progress);
     return;
   }
 
-  if(progress.violations >= 1 && (progress.violationSeen || 0) < progress.violations){
-    renderWarning(progress.violations, async () => {
-      progress.violationSeen = progress.violations;
+  if(vCount >= 1 && (progress.violationSeen || 0) < vCount){
+    renderWarning(vCount, async () => {
+      progress.violationSeen = vCount;
       await saveProgress(currentTeam, progress);
       renderRiddle();
     });
@@ -692,13 +714,15 @@ function renderHost(){
           ${TEAMS.map(t => {
             const p = all[t];
             const doneCount = [1,2,3,4,5].filter(i => p[i]).length;
-            const status = p.disqualified ? `🚫 DQ (station ${p.disqualifiedStation || '?'})` : (p.violations >= 1 ? `⚠️ ${p.violations} warning` : '✓ active');
+            const vCount = violationCount(p);
+            const isDQ = vCount >= 2;
+            const status = isDQ ? `🚫 DQ (station ${lastViolationStation(p) || '?'})` : (vCount >= 1 ? `⚠️ ${vCount} warning` : '✓ active');
             return `<tr>
               <td><b>${t}</b></td>
               ${[1,2,3,4,5].map(i => `<td><span class="pill ${p[i] ? 'on':''}"></span></td>`).join('')}
               <td>${doneCount}/5</td>
-              <td style="${p.disqualified ? 'color: var(--danger);' : ''}">${status}</td>
-              <td>${p.disqualified ? `<button class="reinstate-btn" data-team="${t}">Reinstate</button>` : ''}</td>
+              <td style="${isDQ ? 'color: var(--danger);' : ''}">${status}</td>
+              <td>${isDQ ? `<button class="reinstate-btn" data-team="${t}">Reinstate</button>` : ''}</td>
               <td>${p.claimedBy ? `<button class="reinstate-btn" data-unlock-team="${t}">Unlock device</button>` : ''}</td>
             </tr>`;
           }).join('')}
@@ -717,6 +741,7 @@ function renderHost(){
         delete p.disqualified;
         delete p.disqualifiedStation;
         delete p.disqualifiedAt;
+        delete p.violationEvents;
         p.violations = 0;
         p.violationSeen = 0;
         await saveProgress(t, p);
@@ -738,11 +763,13 @@ function renderHost(){
 window.addEventListener('pageshow', async () => {
   if(!currentTeam) return;
   const progress = await getProgress(currentTeam);
-  if(progress.disqualified){
+  const vCount = violationCount(progress);
+  if(vCount >= 2){
+    progress.disqualifiedStation = lastViolationStation(progress);
     renderDisqualified(progress);
-  } else if(progress.violations >= 1 && (progress.violationSeen || 0) < progress.violations){
-    renderWarning(progress.violations, async () => {
-      progress.violationSeen = progress.violations;
+  } else if(vCount >= 1 && (progress.violationSeen || 0) < vCount){
+    renderWarning(vCount, async () => {
+      progress.violationSeen = vCount;
       await saveProgress(currentTeam, progress);
       renderRiddle();
     });
