@@ -259,17 +259,9 @@ const DB_URL = "https://multi-hunt-default-rtdb.asia-southeast1.firebasedatabase
 function sendViolationBeacon(team, station){
   const url = `${DB_URL}/hunt/${team}/violationEvents.json`;
   const payload = JSON.stringify({ station: station, time: Date.now() });
-  let queued = false;
   try{
-    queued = navigator.sendBeacon(url, new Blob([payload], { type: 'text/plain' }));
+    navigator.sendBeacon(url, new Blob([payload], { type: 'text/plain' }));
   }catch(e){ console.error('violation beacon failed', e); }
-  // Only fall back to fetch if sendBeacon genuinely failed to queue —
-  // firing both unconditionally double-logs a single leave as 2 violations.
-  if(!queued){
-    try{
-      fetch(url, { method: 'POST', body: payload, keepalive: true, headers: { 'Content-Type': 'text/plain' } });
-    }catch(e){ console.error('keepalive fetch failed', e); }
-  }
 }
 function violationCount(progress){
   if(progress.violationEvents) return Object.keys(progress.violationEvents).length;
@@ -349,8 +341,12 @@ function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
 let awayTrackingActive = false;
 let awayViolationPending = false;
 
+let lastViolationAt = 0;
 function markLeave(){
   if(!awayTrackingActive || awayViolationPending) return;
+  const now = Date.now();
+  if(now - lastViolationAt < 4000) return; // hard backstop: no 2 violations within 4s, whatever the cause
+  lastViolationAt = now;
   awayViolationPending = true;
   sendViolationBeacon(currentTeam, currentStation);
 }
