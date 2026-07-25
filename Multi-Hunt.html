@@ -341,30 +341,40 @@ function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
 let awayTrackingActive = false;
 let awayViolationPending = false;
 
+function markLeave(){
+  if(!awayTrackingActive || awayViolationPending) return;
+  awayViolationPending = true;
+  sendViolationBeacon(currentTeam, currentStation);
+}
+function markReturn(){
+  if(!awayViolationPending) return;
+  awayViolationPending = false;
+  awayTrackingActive = false;
+  (async () => {
+    const progress = await getProgress(currentTeam);
+    const count = violationCount(progress);
+    if(count >= 2){
+      progress.disqualifiedStation = lastViolationStation(progress);
+      renderDisqualified(progress);
+    } else if(count >= 1){
+      renderWarning(count, async () => {
+        progress.violationSeen = count;
+        await saveProgress(currentTeam, progress);
+        renderRiddle();
+      });
+    }
+  })();
+}
+
 document.addEventListener('visibilitychange', () => {
   if(!awayTrackingActive) return;
-  if(document.hidden){
-    awayViolationPending = true;
-    sendViolationBeacon(currentTeam, currentStation);
-  } else if(awayViolationPending){
-    awayViolationPending = false;
-    awayTrackingActive = false;
-    (async () => {
-      const progress = await getProgress(currentTeam);
-      const count = violationCount(progress);
-      if(count >= 2){
-        progress.disqualifiedStation = lastViolationStation(progress);
-        renderDisqualified(progress);
-      } else if(count >= 1){
-        renderWarning(count, async () => {
-          progress.violationSeen = count;
-          await saveProgress(currentTeam, progress);
-          renderRiddle();
-        });
-      }
-    })();
-  }
+  if(document.hidden) markLeave(); else markReturn();
 });
+// Catches more leave-gestures than visibilitychange alone (e.g. some
+// swipe-up home-screen previews) — at the cost of occasionally firing on
+// harmless things like the keyboard opening or a notification banner.
+window.addEventListener('blur', () => { if(awayTrackingActive) markLeave(); });
+window.addEventListener('focus', () => { if(awayViolationPending) markReturn(); });
 
 function renderWarning(count, onContinue){
   content.innerHTML = `
